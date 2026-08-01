@@ -1,0 +1,200 @@
+export const FILTERS = [
+  "All roles",
+  "Oil & Gas",
+  "Renewables",
+  "Marine & Offshore",
+  "HSE & Quality",
+  "Engineering",
+] as const;
+
+export type Role = {
+  category: string;
+  title: string;
+  featured: boolean;
+  location: string;
+  type: string;
+  duration: string;
+  posted: string;
+  /** Age in days — used for sorting; smaller = newer. */
+  days: number;
+  salary: string;
+  unit: string;
+};
+
+export const ROLES: Role[] = [
+  {
+    category: "Marine & Offshore",
+    title: "Senior DP Operator",
+    featured: true,
+    location: "North Sea, UK",
+    type: "Rotational",
+    duration: "6/6 rotation",
+    posted: "1 day ago",
+    days: 1,
+    salary: "£700–820",
+    unit: "/day",
+  },
+  {
+    category: "Engineering",
+    title: "Commissioning Lead — LNG",
+    featured: true,
+    location: "Ras Laffan, Qatar",
+    type: "Contract",
+    duration: "24-month",
+    posted: "2 days ago",
+    days: 2,
+    salary: "$850–1,000",
+    unit: "/day",
+  },
+  {
+    category: "Renewables",
+    title: "Wind Turbine Technician (GWO)",
+    featured: true,
+    location: "Rio Grande, Brazil",
+    type: "Rotational",
+    duration: "12-month",
+    posted: "2 days ago",
+    days: 2,
+    salary: "€480–560",
+    unit: "/day",
+  },
+  {
+    category: "HSE & Quality",
+    title: "HSE Manager — EPC",
+    featured: true,
+    location: "Jubail, Saudi Arabia",
+    type: "Staff",
+    duration: "Residential",
+    posted: "3 days ago",
+    days: 3,
+    salary: "$160–190k",
+    unit: "/yr",
+  },
+  {
+    category: "Engineering",
+    title: "Subsea Pipeline Engineer",
+    featured: false,
+    location: "Stavanger, Norway",
+    type: "Rotational",
+    duration: "4/4 rotation",
+    posted: "4 days ago",
+    days: 4,
+    salary: "€720–840",
+    unit: "/day",
+  },
+  {
+    category: "Oil & Gas",
+    title: "Drilling Supervisor",
+    featured: false,
+    location: "Luanda, Angola",
+    type: "Rotational",
+    duration: "28/28 rotation",
+    posted: "5 days ago",
+    days: 5,
+    salary: "$900–1,050",
+    unit: "/day",
+  },
+  {
+    category: "Marine & Offshore",
+    title: "Chief Officer (DP)",
+    featured: false,
+    location: "Gulf of Mexico, US",
+    type: "Rotational",
+    duration: "5/5 rotation",
+    posted: "6 days ago",
+    days: 6,
+    salary: "$650–780",
+    unit: "/day",
+  },
+  {
+    category: "Renewables",
+    title: "Solar Project Engineer",
+    featured: false,
+    location: "Abu Dhabi, UAE",
+    type: "Contract",
+    duration: "18-month",
+    posted: "1 week ago",
+    days: 7,
+    salary: "$520–620",
+    unit: "/day",
+  },
+  {
+    category: "HSE & Quality",
+    title: "QA/QC Inspector — Welding",
+    featured: false,
+    location: "Rotterdam, Netherlands",
+    type: "Contract",
+    duration: "9-month",
+    posted: "1 week ago",
+    days: 8,
+    salary: "€400–470",
+    unit: "/day",
+  },
+  {
+    category: "Oil & Gas",
+    title: "Mud Engineer",
+    featured: false,
+    location: "Basra, Iraq",
+    type: "Rotational",
+    duration: "35/35 rotation",
+    posted: "10 days ago",
+    days: 10,
+    salary: "$700–820",
+    unit: "/day",
+  },
+  {
+    category: "Engineering",
+    title: "Instrumentation Technician",
+    featured: false,
+    location: "Kuala Lumpur, Malaysia",
+    type: "Staff",
+    duration: "Residential",
+    posted: "12 days ago",
+    days: 12,
+    salary: "$90–110k",
+    unit: "/yr",
+  },
+  {
+    category: "Marine & Offshore",
+    title: "ROV Supervisor",
+    featured: false,
+    location: "Aberdeen, UK",
+    type: "Rotational",
+    duration: "4/4 rotation",
+    posted: "2 weeks ago",
+    days: 13,
+    salary: "£560–680",
+    unit: "/day",
+  },
+  {
+    category: "Renewables",
+    title: "BESS Commissioning Engineer",
+    featured: false,
+    location: "Perth, Australia",
+    type: "Contract",
+    duration: "12-month",
+    posted: "2 weeks ago",
+    days: 15,
+    salary: "A$780–900",
+    unit: "/day",
+  },
+  {
+    category: "HSE & Quality",
+    title: "Safety Officer — Offshore",
+    featured: false,
+    location: "Lagos, Nigeria",
+    type: "Rotational",
+    duration: "6/6 rotation",
+    posted: "3 weeks ago",
+    days: 18,
+    salary: "$380–450",
+    unit: "/day",
+  },
+];
+
+/** mailto link used by every "Apply" action (no backend yet). */
+export function applyHref(title: string) {
+  return `mailto:careers@energytalents.com?subject=${encodeURIComponent(
+    `Application — ${title}`,
+  )}`;
+}

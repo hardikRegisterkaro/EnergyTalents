@@ -1,26 +1,640 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---------------------------------------------------------------------------
+   Energy Talents — design tokens
+   Warm, "rig-floor" energy palette: orange primary, amber accent, parchment
+   surfaces, deep ink. Exposed as Tailwind theme variables so utilities like
+   `bg-cream`, `text-brand`, `font-display` are generated automatically.
+--------------------------------------------------------------------------- */
+@theme {
+  --font-display: var(--font-display), "Space Grotesk", sans-serif;
+  --font-body: var(--font-body), "Inter", sans-serif;
+
+  /* The scoped "display" type system (Archivo / JetBrains Mono / IBM Plex /
+     Hanken / Poppins) is NOT declared here. Its next/font vars (--ff-*) are set
+     on a nested wrapper, not :root — so routing them through a :root @theme
+     token computes to an invalid value at :root and inherits down empty,
+     silently falling back to Inter. Instead the font-* utilities below
+     reference --ff-* directly, so substitution happens at the element where
+     --ff-* is actually in scope. See the @utility blocks after @theme. */
+
+  /* Brand / accent */
+  --color-brand: #ea580c;
+  --color-brand-600: #ea580c;
+  --color-brand-500: #f97316;
+  --color-brand-400: #fb923c;
+  --color-amber: #f59e0b;
+  --color-amber-soft: #fbbf77;
+
+  /* Surfaces */
+  --color-cream: #fffbf4;
+  --color-cream-2: #faf6ed;
+  --color-sand: #f5efe3;
+  --color-linec: #ede7da;
+
+  /* Ink */
+  --color-ink: #1e1b16;
+  --color-ink-soft: #42210a;
+  --color-rust: #9a4207;
+  --color-body2: #57534e; /* warm gray for body copy */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Base ------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Scoped display fonts — reference the next/font --ff-* vars directly so they
+   resolve in the element's scope (where the nested wrapper defines them). */
+@utility font-archivo {
+  font-family: var(--ff-archivo), "Archivo", sans-serif;
+}
+@utility font-jbmono {
+  font-family: var(--ff-jbmono), "JetBrains Mono", ui-monospace, monospace;
+}
+@utility font-plex {
+  font-family: var(--ff-plex), "IBM Plex Sans", sans-serif;
+}
+@utility font-hanken {
+  font-family: var(--ff-hanken), "Hanken Grotesk", sans-serif;
+}
+@utility font-poppins {
+  font-family: var(--ff-poppins), "Poppins", sans-serif;
+}
+
+/* Composite surface utilities ------------------------------------------- */
+
+/* Dotted parchment texture */
+@utility dotbg {
+  background-image: radial-gradient(var(--color-linec) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* Dotted texture for dark gradient sections */
+@utility dotbg-dark {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.13) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+/* Deep amber-to-ink diagonal gradient used on feature bands */
+@utility grad-deep {
+  background-image: linear-gradient(
+    105deg,
+    var(--color-amber) 0%,
+    #ea7317 34%,
+    var(--color-rust) 68%,
+    var(--color-ink-soft) 100%
+  );
+}
+
+/* When the dark dots sit on the deep gradient, layer both */
+.grad-deep.dotbg-dark {
+  background-image: radial-gradient(
+      rgba(255, 255, 255, 0.13) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      105deg,
+      var(--color-amber) 0%,
+      #ea7317 34%,
+      var(--color-rust) 68%,
+      var(--color-ink-soft) 100%
+    );
+  background-size:
+    22px 22px,
+    100% 100%;
+}
+
+/* Small "grad" pill/dot fill (nav badge, active carousel dot) */
+@utility grad {
+  background-image: linear-gradient(95deg, #f59e0b, #ea580c, #c2410c);
+}
+
+/* Orange headline span */
+@utility o-text {
+  color: #f97316;
+}
+
+/* Primary gradient button with lift + sheen sweep */
+@utility btn-grad {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  background-image: linear-gradient(95deg, #f59e0b, #ea580c, #c2410c);
+  background-size: 200% 100%;
+  background-position: 0% 0;
+  box-shadow: 0 8px 24px -8px rgba(234, 88, 12, 0.5);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-position 0.4s ease;
+}
+.btn-grad:hover {
+  transform: translateY(-2px);
+  background-position: 60% 0;
+  box-shadow:
+    0 14px 30px -8px rgba(234, 88, 12, 0.55),
+    0 0 0 3px rgba(249, 115, 22, 0.18);
+}
+.btn-grad:active {
+  transform: translateY(0) scale(0.97);
+  box-shadow: 0 5px 14px -6px rgba(234, 88, 12, 0.5);
+}
+.btn-grad::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  height: 100%;
+  width: 50%;
+  background: linear-gradient(
+    105deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: skewX(-18deg);
+  pointer-events: none;
+}
+.btn-grad:hover::after {
+  animation: btnshine 0.7s ease both;
+}
+
+/* Glow behind the small gradient chips / icon tiles */
+@utility chip-glow {
+  box-shadow: 0 6px 18px -4px rgba(249, 115, 22, 0.45);
+}
+
+/* Soft drop shadow used on stat cards */
+@utility softshadow {
+  box-shadow: 0 14px 40px -18px rgba(30, 27, 22, 0.16);
+}
+
+/* Plain white card base */
+@utility card {
+  background: #fff;
+  border: 1px solid var(--color-linec);
+  border-radius: 18px;
+}
+
+/* Value card — top gradient bar reveals on hover, big watermark number */
+@utility vcard {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--color-linec);
+  border-radius: 18px;
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.vcard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 50px -22px rgba(234, 88, 12, 0.28);
+}
+.vcard::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background-image: linear-gradient(95deg, #f59e0b, #ea580c);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s ease;
+}
+.vcard:hover::before {
+  transform: scaleX(1);
+}
+.vnum {
+  position: absolute;
+  top: 18px;
+  right: 24px;
+  font-family: var(--font-display), "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 64px;
+  line-height: 1;
+  color: #f5efe3;
+  letter-spacing: -0.04em;
+  transition: color 0.4s ease;
+  user-select: none;
+}
+.vcard:hover .vnum {
+  color: #ffe8d1;
+}
+.vproof {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--color-linec);
+}
+.vproof b {
+  font-family: var(--font-display), "Space Grotesk", sans-serif;
+  font-size: 20px;
+  background-image: linear-gradient(95deg, #f97316, #ea580c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  white-space: nowrap;
+}
+
+/* Subtle lift on secondary / ghost buttons */
+@utility btn-lift {
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+.btn-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px -14px rgba(30, 27, 22, 0.3);
+}
+.btn-lift:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* HSE protocol tile — 3px gradient bar grows down the left edge on hover */
+@utility hse-tile {
+  position: relative;
+  overflow: hidden;
+}
+.hse-tile::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background-image: linear-gradient(180deg, #f59e0b, #ea580c);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.45s ease;
+}
+.hse-tile:hover::before {
+  transform: scaleY(1);
+}
+
+/* Leadership portrait card — grayscale→color, overlaid meta, hover bio reveal */
+@utility lead-card {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 3 / 3.9;
+  display: block;
+}
+.lead-card .portrait {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+  transform: scale(1.02);
+  transition:
+    filter 0.5s ease,
+    transform 0.5s ease;
+}
+.lead-card:hover .portrait {
+  filter: grayscale(0);
+  transform: scale(1.07);
+}
+.lead-card .shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(24, 16, 8, 0.92) 0%,
+    rgba(24, 16, 8, 0.38) 42%,
+    rgba(24, 16, 8, 0) 68%
+  );
+  transition: opacity 0.4s ease;
+}
+.lead-card .tint {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(154, 66, 7, 0.9) 0%,
+    rgba(234, 88, 12, 0.42) 45%,
+    rgba(245, 158, 11, 0.08) 80%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.lead-card:hover .tint {
+  opacity: 1;
+}
+.lead-card .meta {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 22px;
+}
+.lead-card .bio {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin-top: 0;
+  transition:
+    max-height 0.45s ease,
+    opacity 0.45s ease,
+    margin 0.45s ease;
+}
+.lead-card:hover .bio,
+.lead-card:focus-within .bio {
+  max-height: 150px;
+  opacity: 1;
+  margin-top: 10px;
+}
+.lead-card .bar {
+  height: 3px;
+  width: 34px;
+  background-image: linear-gradient(95deg, #f59e0b, #ea580c);
+  border-radius: 99px;
+  margin-bottom: 12px;
+  transition: width 0.45s ease;
+}
+.lead-card:hover .bar {
+  width: 64px;
+}
+
+/* Deep-band stat card — sheen sweep + gradient underline that grows in */
+@utility stat-card {
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+.stat-card:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+.stat-bar {
+  height: 3px;
+  width: 0;
+  border-radius: 99px;
+  background-image: linear-gradient(95deg, #ffd08a, #fff);
+  margin-top: 12px;
+  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1) 0.55s;
+}
+html[data-reveal-ready] .stat-card.is-in .stat-bar {
+  width: 44px;
+}
+/* No JS: keep the underline visible */
+html:not([data-reveal-ready]) .stat-bar {
+  width: 44px;
+}
+
+/* Crisis step — numbered chip fills on hover, connector rail between steps */
+@utility crisis-num {
+  transition:
+    background 0.3s ease,
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+.crisis-step {
+  position: relative;
+}
+/* Connector rail only exists on the 4-across desktop layout, where it links
+   the gap between number chips. On stacked mobile/tablet the steps are
+   full-width, so a rail would cut straight through the text — omit it there. */
+@media (min-width: 1024px) {
+  .crisis-step:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    /* Start just after the 46px number chip so the rail links the gap
+       between two chips instead of drawing across the current one. */
+    left: 58px;
+    right: -20px;
+    top: 23px;
+    height: 2px;
+    background: linear-gradient(90deg, #ede7da, rgba(237, 231, 218, 0.25));
+  }
+}
+.crisis-step:hover .crisis-num {
+  background-image: linear-gradient(95deg, #f59e0b, #ea580c);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Fully hide the scrollbar AND reclaim its layout space. Used on horizontal
+   card carousels: `overflow-x:auto` forces `overflow-y:auto`, and a
+   space-taking horizontal scrollbar would create a small nested vertical
+   scroll that clips the cards. Also keep horizontal swipes from chaining to
+   the page scroll. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  overscroll-behavior-x: contain;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+--------------------------------------------------------------------------- */
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal — one shared "AOS-style" system used across every page.
+
+   Annotate elements with either the `.reveal` class (= fade-up) or an
+   AOS-style `data-aos="fade-up|fade-down|fade-left|fade-right|zoom-in|fade"`
+   attribute, plus optional `data-aos-delay` / `--reveal-delay` for stagger.
+   The shared client island (app/reveal-init.tsx) adds `.is-in` when the
+   element scrolls into view.
+
+   The hidden state is *opt-in* via `[data-reveal-ready]` on <html>, which the
+   island sets only once JS confirms it can observe elements — so no-JS users,
+   crawlers, and any observer failure always see fully-visible content.
+--------------------------------------------------------------------------- */
+html[data-reveal-ready] .reveal,
+html[data-reveal-ready] [data-aos] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+/* Directional / zoom variants (AOS names) */
+html[data-reveal-ready] [data-aos="fade-down"] {
+  transform: translateY(-24px);
+}
+html[data-reveal-ready] [data-aos="fade-left"] {
+  transform: translateX(24px);
+}
+html[data-reveal-ready] [data-aos="fade-right"] {
+  transform: translateX(-24px);
+}
+html[data-reveal-ready] [data-aos="zoom-in"] {
+  transform: scale(0.94);
+}
+html[data-reveal-ready] [data-aos="fade"] {
+  transform: none;
+}
+
+/* Revealed state */
+html[data-reveal-ready] .reveal.is-in,
+html[data-reveal-ready] [data-aos].is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Count-up pop */
+@keyframes countpop {
+  0% {
+    transform: scale(0.82);
+    opacity: 0.4;
+    filter: blur(2px);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+.counter.counting {
+  animation: countpop 1.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Marquee (logo / trust rows) */
+@keyframes marqL {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes marqR {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marqL 34s linear infinite;
+}
+.marquee-r {
+  animation-name: marqR;
+}
+.marquee-track:hover .marquee {
+  animation-play-state: paused;
+}
+
+/* Role-pill rows — two marquees (opposite directions), pause on hover */
+.rrow {
+  display: flex;
+  gap: 14px;
+  width: max-content;
+}
+.rrow-l {
+  animation: marqL 38s linear infinite;
+}
+.rrow-r {
+  animation: marqR 42s linear infinite;
+}
+.rwrap:hover .rrow {
+  animation-play-state: paused;
+}
+.rchip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  background: #fff;
+  border: 1px solid var(--color-linec);
+  border-radius: 999px;
+  padding: 14px 24px;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: 0 10px 26px -18px rgba(30, 27, 22, 0.5);
+}
+.rchip i {
+  height: 7px;
+  width: 7px;
+  border-radius: 99px;
+  background-image: linear-gradient(95deg, #f59e0b, #ea580c);
+  display: block;
+}
+
+/* Sheen sweep for buttons / stat cards */
+@keyframes btnshine {
+  from {
+    left: -80%;
+  }
+  to {
+    left: 130%;
+  }
+}
+.shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.shine::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: skewX(-18deg);
+  pointer-events: none;
+}
+.shine:hover::after {
+  animation: btnshine 0.9s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-reveal-ready] .reveal,
+  html[data-reveal-ready] [data-aos] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .counter.counting {
+    animation: none;
+  }
+  .marquee,
+  .marquee-r,
+  .rrow-l,
+  .rrow-r {
+    animation: none;
+  }
+  .shine:hover::after,
+  .btn-grad:hover::after {
+    animation: none;
+  }
+  .btn-grad:hover,
+  .btn-lift:hover {
+    transform: none;
+  }
 }
