@@ -25,13 +25,13 @@ type NavItem =
 const NAV: NavItem[] = [
   { label: "About Us", href: "/about" },
   { label: "Services", services: SERVICES },
+  { label: "Resume Builder", href: "/resume-builder" },
   { label: "Careers", href: "/careers" },
   { label: "Insights", href: "/blog" },
 ];
 
-// No dedicated crew-request page yet — the CTA opens a pre-filled email.
-const REQUEST_CREW_HREF =
-  "mailto:crew@energytalents.com?subject=Technical%20Crew%20Request";
+// The primary CTA sends people to the contact page's enquiry form.
+const REQUEST_CREW_HREF = "/contact-us";
 
 // Display-agnostic so callers set `inline-flex` / `hidden md:inline-flex`
 // themselves without two conflicting `display` utilities fighting over order.

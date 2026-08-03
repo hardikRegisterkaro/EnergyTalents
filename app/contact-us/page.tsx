@@ -10,9 +10,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact-us" },
 };
 
-const REQUEST_CREW_HREF =
-  "mailto:crew@energytalents.com?subject=Technical%20Crew%20Request";
-
 export default function ContactPage() {
   return (
     <main>
@@ -54,7 +51,7 @@ export default function ContactPage() {
             className="mt-8 flex flex-wrap justify-center gap-4"
           >
             <a
-              href={REQUEST_CREW_HREF}
+              href="#enquiry"
               className="btn-grad btn-lift inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-body text-sm font-bold text-white"
             >
               Request Technical Crew →

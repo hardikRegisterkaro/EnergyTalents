@@ -649,14 +649,14 @@ export default function AboutPage() {
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
-                <a
-                  href="mailto:crew@energytalents.com?subject=Technical%20Crew%20Request"
+                <Link
+                  href="/contact-us"
                   className="btn-lift inline-flex items-center justify-center gap-2 rounded-lg bg-white px-6 py-3.5 text-[14.5px] font-bold"
                 >
                   <span className="o-text inline-flex items-center gap-2">
                     Request Technical Crew <IconArrowRight className="h-4 w-4" />
                   </span>
-                </a>
+                </Link>
                 <Link
                   href="/careers#pipeline"
                   className="btn-lift inline-flex items-center justify-center rounded-lg border border-white/50 px-6 py-3.5 text-[14.5px] font-semibold text-white hover:bg-white/10"

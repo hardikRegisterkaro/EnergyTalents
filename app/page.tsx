@@ -19,8 +19,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-const REQUEST_CREW_HREF =
-  "mailto:crew@energytalents.com?subject=Technical%20Crew%20Request";
+const REQUEST_CREW_HREF = "/contact-us";
 
 // amber→orange accent gradient (eyebrow rule + badge bullets)
 const ACCENT_GRADIENT = { backgroundImage: "linear-gradient(350deg, #f59e0b, #f97316)" };
@@ -93,7 +92,7 @@ export default function Home() {
 
             {/* CTAs */}
             <div className="reveal mt-9 flex flex-wrap justify-center gap-4">
-              <a
+              <Link
                 href={REQUEST_CREW_HREF}
                 className="flex items-center gap-1.5 rounded-xl px-6 py-3.5 text-sm font-extrabold uppercase tracking-wide text-white shadow-[0_10px_30px_-8px_rgba(234,88,12,0.4)] transition-transform hover:-translate-y-0.5"
                 style={{
@@ -103,7 +102,7 @@ export default function Home() {
                 <span className="font-bold opacity-75">[</span>
                 Request Technical Crew
                 <span className="font-bold opacity-75">]</span>
-              </a>
+              </Link>
               <Link
                 href="/careers#roles"
                 className="flex items-center gap-2 px-7 py-4 text-sm font-extrabold uppercase tracking-wide text-white outline outline-1 -outline-offset-1 outline-white transition-colors hover:bg-white/10"
