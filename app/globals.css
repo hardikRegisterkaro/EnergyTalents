@@ -68,6 +68,9 @@ html {
 @utility font-poppins {
   font-family: var(--ff-poppins), "Poppins", sans-serif;
 }
+@utility font-jakarta {
+  font-family: var(--ff-jakarta), "Plus Jakarta Sans", sans-serif;
+}
 
 /* Composite surface utilities ------------------------------------------- */
 
