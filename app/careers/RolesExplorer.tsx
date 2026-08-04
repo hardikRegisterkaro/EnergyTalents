@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ROLES, FILTERS, applyHref } from "./roles-data";
+import Link from "next/link";
+import { ROLES, FILTERS, slugify } from "./roles-data";
 import { useFilters } from "./FilterContext";
 
 const STEP = 6;
@@ -186,12 +187,12 @@ export default function RolesExplorer() {
                       {role.unit}
                     </span>
                   </div>
-                  <a
-                    href={applyHref(role.title)}
+                  <Link
+                    href={`/careers/${slugify(role.title)}`}
                     className="border border-orange-500/40 px-4 py-2 font-jbmono text-xs font-bold tracking-wide text-orange-500 transition-colors hover:bg-orange-50"
                   >
                     APPLY →
-                  </a>
+                  </Link>
                 </div>
               </div>
             </article>
