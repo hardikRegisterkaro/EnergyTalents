@@ -19,19 +19,19 @@ type Region = {
 const REGIONS: Region[] = [
   {
     title: "The Americas",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0) 44%, rgba(0,0,0,0.55) 100%), radial-gradient(75% 55% at 50% 24%, rgba(251,146,60,0.42), rgba(251,146,60,0) 60%), linear-gradient(160deg, #2a1c12 0%, #7c3a12 60%, #0a0a0a 100%)",
+    bg: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%), url('/america.webp')",
   },
   {
     title: "Middle East\n& Africa",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0) 44%, rgba(0,0,0,0.55) 100%), radial-gradient(75% 55% at 50% 24%, rgba(245,158,11,0.45), rgba(245,158,11,0) 60%), linear-gradient(160deg, #2b2412 0%, #8a5a14 60%, #0a0a0a 100%)",
+    bg: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%), url('/middleEast.webp')",
   },
   {
     title: "Europe\n& North Sea",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0) 44%, rgba(0,0,0,0.55) 100%), radial-gradient(75% 55% at 50% 24%, rgba(56,189,248,0.4), rgba(56,189,248,0) 60%), linear-gradient(160deg, #12212b 0%, #1e4257 60%, #0a0a0a 100%)",
+    bg: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%), url('/europe.webp')",
   },
   {
     title: "Asia-Pacific",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0) 44%, rgba(0,0,0,0.55) 100%), radial-gradient(75% 55% at 50% 24%, rgba(45,212,191,0.4), rgba(45,212,191,0) 60%), linear-gradient(160deg, #0f2622 0%, #124a40 60%, #0a0a0a 100%)",
+    bg: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%), url('/asia.webp')",
   },
 ];
 

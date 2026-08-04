@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconBolt, IconArrowRight, IconMenu, IconClose } from "./about/icons";
+import { IconArrowRight, IconMenu, IconClose } from "./about/icons";
 
 /**
  * Services shown in the "Services" nav dropdown. Add an entry here when a new
@@ -90,16 +90,14 @@ export default function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-linec/70 bg-white/85 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+      <div className="mx-auto flex h-16 max-w-[1360px] items-center justify-between px-6">
         <Link
           href="/"
-          className="flex items-center gap-2 font-display text-sm font-bold uppercase tracking-[0.14em] text-ink"
+          className="flex shrink-0 items-center"
           onClick={() => setOpen(false)}
         >
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-brand text-white">
-            <IconBolt className="h-4 w-4" />
-          </span>
-          Energy Talents
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/logo.svg" alt="Energy Talents" className="h-11 w-auto" />
         </Link>
 
         {/* Desktop nav */}
@@ -217,7 +215,7 @@ export default function SiteHeader() {
             : "pointer-events-none -translate-y-3 opacity-0"
         }`}
       >
-        <nav className="mx-auto max-w-6xl px-6 py-4">
+        <nav className="mx-auto max-w-[1360px] px-6 py-4">
           <ul className="flex flex-col divide-y divide-linec">
             {NAV.map((n) =>
               "services" in n ? (

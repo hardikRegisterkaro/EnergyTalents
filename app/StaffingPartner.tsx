@@ -23,8 +23,7 @@ const STATS: Stat[] = [
 
 // Warm industrial placeholder — swap for real crew/site photography.
 const IMAGE_STYLE = {
-  backgroundImage:
-    "radial-gradient(70% 60% at 30% 22%, rgba(251,191,36,0.35), rgba(251,191,36,0) 55%), linear-gradient(135deg, #1f2937 0%, #3f3527 45%, #6b3f1c 100%)",
+  backgroundImage: "url('/oil-rig.svg')",
 };
 
 export default function StaffingPartner() {
@@ -67,10 +66,10 @@ export default function StaffingPartner() {
         {/* Framed image */}
         <div data-aos="fade-up" data-aos-delay="120" className="relative">
           <div
-            className="aspect-[557/460] w-full overflow-hidden bg-neutral-900"
+            className="aspect-[557/460] w-full overflow-hidden bg-neutral-900 bg-cover bg-center"
             style={IMAGE_STYLE}
             role="img"
-            aria-label="Energy Talents crew coordinating a global deployment"
+            aria-label="Offshore drilling platform at sea"
           />
           {/* amber corner brackets */}
           <span

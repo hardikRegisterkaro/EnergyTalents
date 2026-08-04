@@ -23,25 +23,25 @@ const SECTORS: Sector[] = [
     n: "01",
     title: "Renewable\nPower",
     body: "Wind technicians, solar EPC crews and grid specialists driving the energy transition.",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0) 42%, rgba(0,0,0,0.55) 100%), radial-gradient(80% 55% at 50% 18%, rgba(16,185,129,0.45), rgba(16,185,129,0) 60%), linear-gradient(180deg, #0f2b23 0%, #14532d 55%, #0a0a0a 100%)",
+    bg: "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%), url('/offshore-drilling-rig.svg')",
   },
   {
     n: "02",
     title: "Oil &\nGas",
     body: "Drilling, commissioning & turnaround specialists for upstream and downstream operations.",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0) 42%, rgba(0,0,0,0.55) 100%), radial-gradient(80% 55% at 50% 18%, rgba(245,158,11,0.5), rgba(245,158,11,0) 60%), linear-gradient(180deg, #3b2a12 0%, #6b3f1c 55%, #0a0a0a 100%)",
+    bg: "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%), url('/silhouette-oil-rig.svg')",
   },
   {
     n: "03",
     title: "Infrastructure\n& Civil",
     body: "Heavy civil, EPC and processing crews for resource and infrastructure megaprojects.",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0) 42%, rgba(0,0,0,0.55) 100%), radial-gradient(80% 55% at 50% 18%, rgba(148,163,184,0.4), rgba(148,163,184,0) 60%), linear-gradient(180deg, #1e293b 0%, #334155 55%, #0a0a0a 100%)",
+    bg: "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%), url('/oil-rig.svg')",
   },
   {
     n: "04",
     title: "Maritime\n& Offshore",
     body: "Marine crew, DP operators and deck & engine officers for vessels, rigs and FPSOs.",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0) 42%, rgba(0,0,0,0.55) 100%), radial-gradient(80% 55% at 50% 18%, rgba(56,189,248,0.4), rgba(56,189,248,0) 60%), linear-gradient(180deg, #0c2436 0%, #0e4a6e 55%, #0a0a0a 100%)",
+    bg: "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%), url('/semi-submersible-oil.svg')",
   },
 ];
 

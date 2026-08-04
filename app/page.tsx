@@ -36,15 +36,11 @@ export default function Home() {
       {/* Hero — floating inset block ------------------------------- */}
       <div className="p-2 sm:p-3">
         <section className="relative overflow-hidden rounded-[28px] bg-neutral-950 px-4 py-16 sm:px-6 md:py-24">
-        {/* Background — drops in /public/hero.jpg (rig at sunset) when present;
-            falls back to a sunset gradient underneath until then. */}
+        {/* Background — rig-at-sunset photo */}
         <div
           aria-hidden
           className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('/hero.jpg'), radial-gradient(55% 45% at 82% 58%, rgba(251,191,36,0.55), rgba(251,191,36,0) 55%), linear-gradient(180deg, #253141 0%, #6b3f1c 58%, #100d0b 100%)",
-          }}
+          style={{ backgroundImage: "url('/homeHero.png')" }}
         />
         {/* Subtle darkening for text contrast over any photo */}
         <div aria-hidden className="absolute inset-0 bg-black/20" />

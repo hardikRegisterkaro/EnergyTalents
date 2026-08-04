@@ -1,10 +1,5 @@
 import Link from "next/link";
-import {
-  IconSun,
-  IconLinkedIn,
-  IconX,
-  IconYouTube,
-} from "./about/icons";
+import { IconLinkedIn, IconX, IconYouTube } from "./about/icons";
 
 const CONTACT_HREF = "mailto:crew@energytalents.com";
 
@@ -63,13 +58,9 @@ export default function SiteFooter() {
       <div className="mx-auto max-w-[1216px] px-6">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr]">
           <div>
-            <Link href="/" className="inline-flex items-center gap-2.5 text-brand">
-              <IconSun className="h-6 w-8" />
-              <span className="font-display text-[11px] font-bold uppercase leading-[1.1] tracking-[0.28em] text-ink">
-                Energy
-                <br />
-                Talents
-              </span>
+            <Link href="/" className="inline-flex items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/logo.svg" alt="Energy Talents" className="h-9 w-auto" />
             </Link>
             <p className="mt-5 max-w-[320px] text-[14px] leading-relaxed text-body2">
               Supplying, deploying, and managing skilled technical manpower for
