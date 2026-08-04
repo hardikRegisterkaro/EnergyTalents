@@ -192,9 +192,124 @@ export const ROLES: Role[] = [
   },
 ];
 
-/** mailto link used by every "Apply" action (no backend yet). */
-export function applyHref(title: string) {
-  return `mailto:careers@energytalents.com?subject=${encodeURIComponent(
-    `Application — ${title}`,
-  )}`;
+/** URL-safe slug from a role title, e.g. "Chief Officer (DP)" → "chief-officer-dp". */
+export function slugify(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+/** Look up a role by its slug — used by the /careers/[slug] application page. */
+export function getRole(slug: string) {
+  return ROLES.find((r) => slugify(r.title) === slug);
+}
+
+export type JobDescription = {
+  overview: string;
+  responsibilities: string[];
+  requirements: string[];
+  offer: string[];
+};
+
+// Discipline-level responsibilities & requirements. Kept per-category so every
+// role reads as a believable JD without hand-writing fourteen separate specs.
+const BY_CATEGORY: Record<
+  string,
+  { responsibilities: string[]; requirements: string[] }
+> = {
+  "Marine & Offshore": {
+    responsibilities: [
+      "Maintain safe station-keeping and watchkeeping in line with the vessel's DP and marine operating procedures.",
+      "Operate and monitor bridge, DP and navigation systems across each shift.",
+      "Work to permit-to-work and safety-critical procedures alongside the OIM and marine team.",
+      "Keep accurate logs, handovers and incident reports for every watch.",
+    ],
+    requirements: [
+      "Valid STCW certification and a current offshore medical (OGUK / ENG1 or equivalent).",
+      "BOSIET / FOET survival training valid for the region.",
+      "Role-relevant DP or marine certification with verifiable sea time.",
+      "Fluent English and strong situational awareness under pressure.",
+    ],
+  },
+  Engineering: {
+    responsibilities: [
+      "Own engineering delivery for your discipline across design, commissioning and hand-over.",
+      "Produce and review technical documentation against project specifications and codes.",
+      "Coordinate with multidiscipline teams, vendors and the client's site representatives.",
+      "Drive close-out of punch-list items and support a safe start-up.",
+    ],
+    requirements: [
+      "Degree or equivalent in a relevant engineering discipline.",
+      "Proven project experience in energy, oil & gas or infrastructure.",
+      "Working knowledge of international standards (ISO, API, IEC) relevant to the role.",
+      "Strong reporting and stakeholder-communication skills.",
+    ],
+  },
+  Renewables: {
+    responsibilities: [
+      "Install, commission and maintain turbine or solar plant to manufacturer and project standards.",
+      "Carry out inspections, fault-finding and preventive maintenance safely at height or on site.",
+      "Complete service records, snags and commissioning sign-offs accurately.",
+      "Uphold electrical safety and isolation procedures at all times.",
+    ],
+    requirements: [
+      "Current GWO modules (or willingness to certify) and work-at-height training.",
+      "Relevant electrical or mechanical qualification for the role.",
+      "Experience on wind, solar or BESS projects preferred.",
+      "Comfortable with remote sites and rotational travel.",
+    ],
+  },
+  "HSE & Quality": {
+    responsibilities: [
+      "Implement and monitor the project HSE and quality management systems on site.",
+      "Run audits, inspections, toolbox talks and incident investigations.",
+      "Track corrective actions to close-out and report performance to the client.",
+      "Champion a strong safety culture across all crews and subcontractors.",
+    ],
+    requirements: [
+      "Recognised HSE or QA certification (NEBOSH / IOSH, or CSWIP / CQI as relevant).",
+      "Audit and inspection experience against international standards.",
+      "Confident engaging crews, supervisors and client representatives.",
+      "Meticulous documentation and reporting discipline.",
+    ],
+  },
+  "Oil & Gas": {
+    responsibilities: [
+      "Supervise safe drilling / well operations and the crews delivering them.",
+      "Maintain well control, equipment integrity and operational readiness.",
+      "Enforce permit-to-work, isolation and safety-critical procedures.",
+      "Report progress, NPT and HSE performance to the company man and base.",
+    ],
+    requirements: [
+      "Valid well-control certification (IWCF / IADC) where applicable.",
+      "Offshore survival (BOSIET / FOET) and a current medical.",
+      "Solid discipline experience on comparable operations.",
+      "Strong leadership and clear communication with mixed-nationality crews.",
+    ],
+  },
+};
+
+// Every role offers the same Energy Talents package.
+const OFFER = [
+  "Compliant global payroll in your currency, paid on time, every rotation.",
+  "Visas, medicals, travel and accommodation arranged before you fly.",
+  "Transparent, benchmarked day rates with no hidden agency margins.",
+  "One dedicated account desk that knows your file end to end.",
+];
+
+/** Build a full job description for a role from its fields + discipline template. */
+export function getJobDescription(role: Role): JobDescription {
+  const cat = BY_CATEGORY[role.category] ?? BY_CATEGORY.Engineering;
+  const overview =
+    `We're hiring a ${role.title} for a ${role.type.toLowerCase()} assignment in ` +
+    `${role.location}. It's a ${role.duration} position paying ${role.salary}${role.unit}, ` +
+    `mobilized and managed end to end by Energy Talents — you focus on the job while we ` +
+    `handle visas, travel, payroll and compliance.`;
+  return {
+    overview,
+    responsibilities: cat.responsibilities,
+    requirements: cat.requirements,
+    offer: OFFER,
+  };
 }

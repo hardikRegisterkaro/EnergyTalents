@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { FilterProvider } from "./FilterContext";
 import HeroSearch from "./HeroSearch";
 import RolesExplorer from "./RolesExplorer";
+import Link from "next/link";
 import PipelineForm from "./PipelineForm";
-import { applyHref } from "./roles-data";
 
 export const metadata: Metadata = {
   title: "Careers",
@@ -20,10 +20,26 @@ const STATS = [
 ];
 
 const FEATURED = [
-  { title: "Senior DP Operator", meta: "North Sea · 6/6 rotation" },
-  { title: "Commissioning Lead — LNG", meta: "Qatar · 24-month contract" },
-  { title: "Wind Turbine Tech (GWO)", meta: "Brazil · 12-month rotation" },
-  { title: "HSE Manager — EPC", meta: "Saudi Arabia · Staff" },
+  {
+    title: "Senior DP Operator",
+    meta: "North Sea · 6/6 rotation",
+    slug: "senior-dp-operator",
+  },
+  {
+    title: "Commissioning Lead — LNG",
+    meta: "Qatar · 24-month contract",
+    slug: "commissioning-lead-lng",
+  },
+  {
+    title: "Wind Turbine Tech (GWO)",
+    meta: "Brazil · 12-month rotation",
+    slug: "wind-turbine-technician-gwo",
+  },
+  {
+    title: "HSE Manager — EPC",
+    meta: "Saudi Arabia · Staff",
+    slug: "hse-manager-epc",
+  },
 ];
 
 const BENEFITS = [
@@ -195,12 +211,12 @@ export default function CareersPage() {
                       {job.meta}
                     </div>
                   </div>
-                  <a
-                    href={applyHref(job.title)}
+                  <Link
+                    href={`/careers/${job.slug}`}
                     className="whitespace-nowrap font-jbmono text-xs font-medium tracking-wide text-orange-500 transition-colors hover:text-orange-400"
                   >
                     Apply →
-                  </a>
+                  </Link>
                 </div>
               ))}
             </div>
