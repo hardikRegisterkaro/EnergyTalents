@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { RequestModalButton } from "./RequestModal";
 
 /**
  * "Common Questions" — a sticky pitch + CTA on the left and an interactive FAQ
@@ -8,9 +9,6 @@ import { useState } from "react";
  * item 01 starts open. The +/− marker is CSS-only (the vertical bar fades out
  * when the row is open).
  */
-
-const DESK_HREF =
-  "mailto:crew@energytalents.com?subject=Mobilization%20Desk%20Enquiry%20%E2%80%94%20Contract%20Manpower%20Supply";
 
 const FAQS = [
   {
@@ -65,12 +63,11 @@ export default function FaqSection() {
             Still need specifics? Our mobilization desk responds with an
             indicative crew plan within one business day.
           </p>
-          <a
-            href={DESK_HREF}
+          <RequestModalButton
             className="mt-6 inline-flex px-6 py-4 font-jbmono text-xs font-bold uppercase tracking-wider text-neutral-900 outline outline-[1.5px] -outline-offset-[1.5px] outline-neutral-900/25 transition-colors hover:outline-neutral-900/50"
           >
             [ Talk to the desk → ]
-          </a>
+          </RequestModalButton>
         </div>
 
         {/* Right — accordion */}

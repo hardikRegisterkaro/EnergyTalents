@@ -8,6 +8,7 @@ import RiskMitigation from "../RiskMitigation";
 import FaqSection from "../FaqSection";
 import CtaBanner from "../CtaBanner";
 import EngageDesk from "../EngageDesk";
+import { RequestModalButton } from "../RequestModal";
 
 export const metadata: Metadata = {
   title: "Contract Manpower Supply",
@@ -15,11 +16,6 @@ export const metadata: Metadata = {
     "Engineered workforce solutions for the energy sector — highly technical, compliant and vetted engineering talent deployed across upstream, downstream and renewable projects, with rotation, payroll and mobilization handled end to end.",
   alternates: { canonical: "/services/contract-manpower-supply" },
 };
-
-const REQUEST_PROFILES_HREF =
-  "mailto:crew@energytalents.com?subject=Talent%20Profiles%20Request%20%E2%80%94%20Contract%20Manpower%20Supply";
-const DISCUSS_HREF =
-  "mailto:crew@energytalents.com?subject=Project%20Requirements%20%E2%80%94%20Contract%20Manpower%20Supply";
 
 const BADGES = [
   "Tier-1 Operator Approved",
@@ -106,21 +102,20 @@ export default function ContractManpowerSupplyPage() {
 
             {/* CTAs */}
             <div className="flex flex-wrap gap-4">
-              <a
-                href={REQUEST_PROFILES_HREF}
+              <Link
+                href="/careers"
                 className="flex items-center justify-center rounded-lg px-6 py-3.5 font-jbmono text-xs font-bold uppercase tracking-wider text-white shadow-[0_12px_30px_-8px_rgba(234,88,12,0.55)] transition-transform hover:-translate-y-0.5"
                 style={{
                   backgroundImage: "linear-gradient(30deg, #eab308, #ea580c)",
                 }}
               >
                 [ Request Talent Profiles → ]
-              </a>
-              <a
-                href={DISCUSS_HREF}
+              </Link>
+              <RequestModalButton
                 className="flex items-center justify-center px-6 py-3.5 font-jbmono text-xs font-bold uppercase tracking-wider text-white outline outline-1 -outline-offset-1 outline-white/40 transition-colors hover:bg-white/10"
               >
                 [ Discuss Project Requirements ]
-              </a>
+              </RequestModalButton>
             </div>
 
             {/* Trust badges */}

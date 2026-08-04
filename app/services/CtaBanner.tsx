@@ -1,10 +1,9 @@
+import { RequestModalButton } from "./RequestModal";
+
 /**
  * Closing CTA band — orange gradient, headline left, white contact button
  * right. Stacks on mobile.
  */
-
-const CONTACT_HREF =
-  "mailto:crew@energytalents.com?subject=Consultation%20%E2%80%94%20Contract%20Manpower%20Supply";
 
 export default function CtaBanner() {
   return (
@@ -20,14 +19,13 @@ export default function CtaBanner() {
           </h2>
         </div>
 
-        <a
-          href={CONTACT_HREF}
+        <RequestModalButton
           data-aos="fade-up"
           data-aos-delay="100"
           className="inline-flex shrink-0 self-start bg-white px-6 py-4 font-jbmono text-xs font-bold uppercase tracking-wider text-neutral-900 transition-colors hover:bg-neutral-100 lg:self-auto"
         >
           [ Contact an Energy HR Consultant → ]
-        </a>
+        </RequestModalButton>
       </div>
     </section>
   );
