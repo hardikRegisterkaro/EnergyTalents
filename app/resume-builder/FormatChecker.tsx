@@ -1,3 +1,6 @@
+import { ResumeModalButton } from "./ResumeModal";
+import { AUDIT_INTENT } from "./resume-intents";
+
 /**
  * "Format Auditor" — copy + gradient CTA on the left, and a mock audit panel on
  * the right (score header + skeleton doc, floating ✓ chips and an AI suggestion
@@ -63,13 +66,13 @@ export default function FormatChecker() {
             formatting, risky fonts and missing keywords, then suggests fixes in
             plain language as you edit.
           </p>
-          <button
-            type="button"
+          <ResumeModalButton
+            intent={AUDIT_INTENT}
             className="mt-6 rounded-xl px-6 py-[15px] font-body text-sm font-semibold text-white shadow-[0_14px_17px_-4px_rgba(255,122,0,0.5)] transition-transform hover:-translate-y-0.5"
             style={{ backgroundImage: ACCENT_GRADIENT }}
           >
             Run Format Audit
-          </button>
+          </ResumeModalButton>
         </div>
 
         {/* Mockup */}
