@@ -11,17 +11,16 @@ import { useState } from "react";
 type Region = {
   value: string;
   label: string;
-  hub: string;
-  coord: string;
-  initials: string;
 };
 
+// Where the project is — every enquiry reaches our one mobilization desk.
 const REGIONS: Region[] = [
-  { value: "mea", label: "Middle East & Africa", hub: "Dubai", coord: "Layla Haddad", initials: "LH" },
-  { value: "euro", label: "Europe & North Sea", hub: "Aberdeen", coord: "Callum Ross", initials: "CR" },
-  { value: "apac", label: "Asia-Pacific", hub: "Singapore", coord: "Mei Tan", initials: "MT" },
-  { value: "amer", label: "The Americas", hub: "Houston", coord: "Diego Santos", initials: "DS" },
-  { value: "global", label: "Multiple / global", hub: "Global coordination", coord: "the global desk", initials: "GL" },
+  { value: "mea", label: "Middle East & Africa" },
+  { value: "euro", label: "Europe & North Sea" },
+  { value: "apac", label: "Asia-Pacific" },
+  { value: "amer", label: "The Americas" },
+  { value: "india", label: "India / domestic" },
+  { value: "global", label: "Multiple / global" },
 ];
 
 const inputBase =
@@ -80,11 +79,11 @@ export default function EnquiryForm() {
           Send an enquiry
         </p>
         <h2 className="mt-4 max-w-md font-display text-[28px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[40px]">
-          One form. The right desk, first time.
+          One form. Straight to our desk.
         </h2>
         <p className="mt-4 max-w-md font-body text-base leading-relaxed text-body2">
-          Pick who you are and the form adapts. Everything routes straight to
-          the coordinator who handles your discipline and region.
+          Tell us the project region and scope, and our mobilization desk takes
+          it from there — sourcing, vetting and travel handled end to end.
         </p>
 
         {/* Routing card */}
@@ -94,23 +93,23 @@ export default function EnquiryForm() {
           </p>
           <div className="mt-4 flex items-center gap-3.5">
             <span className="grid size-11 shrink-0 place-items-center rounded-full font-display text-sm font-bold text-white grad">
-              {desk ? desk.initials : "GL"}
+              ET
             </span>
             <div>
               <div className="font-display text-base font-bold text-ink">
-                {desk ? `${desk.hub} desk` : "Awaiting your region"}
+                Our mobilization desk
               </div>
               <div className="mt-0.5 font-body text-[13px] leading-snug text-body2">
                 {desk
-                  ? `${desk.coord} coordinates ${desk.label} crewing.`
-                  : "Choose a project region and we'll name the desk."}
+                  ? `We'll match crew for your ${desk.label} project.`
+                  : "Tirunelveli, Tamil Nadu, India"}
               </div>
             </div>
           </div>
           <div className="mt-5 flex items-center gap-2 border-t border-linec pt-4">
             <span className="size-2 rounded-full bg-green-500" />
             <span className="font-body text-[13px] font-medium text-body2">
-              {desk ? `${desk.hub} desk currently open` : "All four desks currently open"}
+              Open now · replies within 4 working hours
             </span>
           </div>
         </div>
@@ -163,12 +162,9 @@ export default function EnquiryForm() {
               Enquiry received
             </h3>
             <p className="mt-2 font-body text-sm leading-6 text-body2">
-              Your request is with the{" "}
-              <span className="font-semibold text-ink">
-                {desk ? `${desk.hub} desk` : "coordination desk"}
-              </span>
-              . {desk ? desk.coord.replace(/^the /, "") : "A coordinator"} will
-              reply within four working hours.
+              Your request is with our{" "}
+              <span className="font-semibold text-ink">mobilization desk</span>.
+              We&rsquo;ll reply within four working hours.
             </p>
             <button
               type="button"

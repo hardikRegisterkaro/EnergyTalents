@@ -45,6 +45,18 @@ html {
   scroll-padding-top: 5rem;
 }
 
+/* Tailwind v4's Preflight drops the default pointer cursor on buttons, so
+   icon buttons, toggles and any styled <button> show an arrow. Restore the
+   hand cursor on all interactive controls (links already get it natively).
+   Disabled controls keep the default arrow. */
+button:not(:disabled),
+[role="button"]:not(:disabled),
+label:has(> input[type="file"]),
+summary,
+select:not(:disabled) {
+  cursor: pointer;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

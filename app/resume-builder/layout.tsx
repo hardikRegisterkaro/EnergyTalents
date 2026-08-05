@@ -1,9 +1,12 @@
 import { Plus_Jakarta_Sans } from "next/font/google";
+import { ResumeModalProvider } from "./ResumeModal";
 
 /**
  * The resume-builder product page uses Plus Jakarta Sans for display headings
  * (with Inter for body, already global). Scoped here so the font loads only on
- * this route; `font-jakarta` reads --ff-jakarta directly (see globals.css).
+ * this route; `font-jakarta` reads --ff-jakarta directly (see globals.css). The
+ * ResumeModalProvider mounts the shared enquiry modal once so any CTA on the
+ * page can open it.
  */
 const jakarta = Plus_Jakarta_Sans({
   variable: "--ff-jakarta",
@@ -17,5 +20,9 @@ export default function ResumeBuilderLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className={jakarta.variable}>{children}</div>;
+  return (
+    <div className={jakarta.variable}>
+      <ResumeModalProvider>{children}</ResumeModalProvider>
+    </div>
+  );
 }

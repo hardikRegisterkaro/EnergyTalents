@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCarousel } from "./useCarousel";
 
@@ -8,31 +9,24 @@ import { useCarousel } from "./useCarousel";
  * mobile it's a swipeable scroll-snap carousel with pagination dots; at sm it
  * becomes a 2-up grid and at lg a 4-across grid. No hover stretch (each card
  * holds its width so real photography won't distort) — just a gentle uniform
- * zoom + arrow nudge on hover. Gradient placeholders stand in for photography.
+ * zoom + arrow nudge on hover. Photos run through next/image (optimized,
+ * lazy-loaded) with the scrim rendered as an overlay on top.
  */
 
 type Region = {
   title: string;
-  bg: string;
+  src: string;
 };
 
+/** Top+bottom darkening so the label desk and any top text stay legible. */
+const SCRIM =
+  "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%)";
+
 const REGIONS: Region[] = [
-  {
-    title: "The Americas",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%), url('/america.webp')",
-  },
-  {
-    title: "Middle East\n& Africa",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%), url('/middleEast.webp')",
-  },
-  {
-    title: "Europe\n& North Sea",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%), url('/europe.webp')",
-  },
-  {
-    title: "Asia-Pacific",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 45%, rgba(0,0,0,0.5) 100%), url('/asia.webp')",
-  },
+  { title: "The Americas", src: "/america.webp" },
+  { title: "Middle East\n& Africa", src: "/middleEast.webp" },
+  { title: "Europe\n& North Sea", src: "/europe.webp" },
+  { title: "Asia-Pacific", src: "/asia.webp" },
 ];
 
 export default function RegionCards() {
@@ -65,11 +59,18 @@ export default function RegionCards() {
             data-aos="fade-up"
             className="group relative block h-[420px] w-[72%] shrink-0 snap-start overflow-hidden outline outline-1 -outline-offset-1 outline-stone-200 sm:w-auto"
           >
-            {/* Background (gradient placeholder) */}
+            {/* Background image (optimized) + scrim overlay */}
+            <Image
+              src={r.src}
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 72vw"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            />
             <div
               aria-hidden
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-              style={{ backgroundImage: r.bg }}
+              className="absolute inset-0"
+              style={{ background: SCRIM }}
             />
 
             {/* Label desk — fixed height so 1- and 2-line titles align */}

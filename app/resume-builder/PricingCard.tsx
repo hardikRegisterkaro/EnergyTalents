@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useResumeModal } from "./ResumeModal";
+import { planIntent } from "./resume-intents";
 
 /**
  * Hero pricing — a shared billing toggle over two plan cards (Resume Only, and
@@ -57,6 +59,7 @@ function Tick({ tone, li }: { tone: "orange" | "blue"; li?: boolean }) {
 
 export default function PricingCard() {
   const [active, setActive] = useState(1); // Quarterly
+  const { openModal } = useResumeModal();
 
   return (
     <div className="mt-10 w-full">
@@ -116,6 +119,11 @@ export default function PricingCard() {
           </ul>
           <button
             type="button"
+            onClick={() =>
+              openModal(
+                planIntent("Resume Only", PERIODS[active], RESUME.price[active]),
+              )
+            }
             className="mt-auto block w-full rounded-xl pt-0 text-center"
           >
             <span
@@ -167,6 +175,15 @@ export default function PricingCard() {
             </ul>
             <button
               type="button"
+              onClick={() =>
+                openModal(
+                  planIntent(
+                    "Resume + LinkedIn",
+                    PERIODS[active],
+                    COMBO.price[active],
+                  ),
+                )
+              }
               className="mt-auto flex w-full items-center justify-center gap-2.5 rounded-xl pt-0"
             >
               <span

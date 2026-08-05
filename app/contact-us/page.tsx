@@ -22,10 +22,10 @@ export default function ContactPage() {
           >
             <span className="size-2 rounded-full bg-green-500" />
             <span className="font-body text-xs font-semibold text-ink">
-              Mobilization desks open now
+              Enquiry desk open now
             </span>
             <span className="font-body text-xs text-body2/70">
-              · Dubai · Aberdeen · Singapore · Houston
+              · Tirunelveli, Tamil Nadu, India
             </span>
           </div>
 
@@ -100,16 +100,16 @@ export default function ContactPage() {
 
           <div className="flex w-full max-w-md flex-col gap-4">
             <a
-              href="tel:+97140000000"
+              href="tel:+919176674449"
               data-aos="fade-up"
               className="flex items-center justify-between gap-4 rounded-2xl bg-white p-6 softshadow"
             >
               <div>
                 <div className="font-body text-[11px] font-bold uppercase tracking-[0.14em] text-body2/70">
-                  Global emergency line
+                  24/7 emergency line
                 </div>
                 <div className="mt-1 font-display text-xl font-bold text-brand">
-                  +971 4 000 0000
+                  +91 91766 74449
                 </div>
               </div>
               <span className="grid size-11 shrink-0 place-items-center rounded-xl text-white grad">
@@ -124,17 +124,17 @@ export default function ContactPage() {
               </span>
             </a>
             <a
-              href="mailto:duty@energytalents.com"
+              href="mailto:immanuel@energytalentz.com"
               data-aos="fade-up"
               data-aos-delay="100"
               className="group flex items-center justify-between gap-4 rounded-2xl border border-white/30 p-6 transition-colors hover:bg-white/10"
             >
               <div>
                 <div className="font-body text-[11px] font-bold uppercase tracking-[0.14em] text-white/70">
-                  Duty desk email
+                  Email us
                 </div>
                 <div className="mt-1 font-display text-lg font-bold text-white">
-                  duty@energytalents.com
+                  immanuel@energytalentz.com
                 </div>
               </div>
               <span className="text-xl text-white transition-transform group-hover:translate-x-0.5">
@@ -176,7 +176,7 @@ export default function ContactPage() {
                 </h2>
                 <p className="mt-3 max-w-md font-body text-base leading-relaxed text-white/85">
                   Send the enquiry and we&rsquo;ll route it. Or read how we
-                  mobilize, vet and pay 25,000+ technical professionals
+                  mobilize, vet and pay technical crews for energy projects
                   worldwide.
                 </p>
               </div>

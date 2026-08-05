@@ -18,24 +18,17 @@ export const metadata: Metadata = {
 };
 
 const BADGES = [
-  "Tier-1 Operator Approved",
-  "100% Compliance Rate",
-  "Single Global Contract",
+  "Vetted technical crews",
+  "Compliance-first",
+  "Single global contract",
 ];
 
 const DESK_STATS = [
+  { label: "Deployment reach", display: "Global" },
+  { label: "Compliance", display: "End-to-end" },
   {
-    label: "Active contractors deployed",
-    target: "1200",
-    suffix: "+",
-    display: "1,200+",
-  },
-  { label: "Compliance rate", target: "100", suffix: "%", display: "100%" },
-  {
-    label: "Avg. vetted shortlist",
-    target: "72",
-    suffix: "h",
-    display: "72h",
+    label: "Vetted shortlist",
+    display: "Fast",
     chart: [45, 62, 40, 78, 55, 88, 70],
   },
 ];
@@ -154,13 +147,7 @@ export default function ContractManpowerSupplyPage() {
                   {s.label}
                 </div>
                 <div className="mt-1.5 flex items-baseline font-archivo text-3xl font-extrabold text-white">
-                  <span
-                    className="counter"
-                    data-target={s.target}
-                    data-suffix={s.suffix}
-                  >
-                    {s.display}
-                  </span>
+                  <span>{s.display}</span>
                 </div>
                 {s.chart && (
                   <div className="mt-3 flex h-6 items-end gap-1">

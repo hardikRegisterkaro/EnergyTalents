@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { IconLinkedIn, IconX, IconYouTube } from "./about/icons";
 
-const CONTACT_HREF = "mailto:crew@energytalents.com";
+const CONTACT_HREF = "mailto:immanuel@energytalentz.com";
 
 // Everything points at a page/section that actually exists. Sector and
 // capability topics live on the About & Careers pages; compliance detail
@@ -68,11 +68,25 @@ export default function SiteFooter() {
               projects.
             </p>
             <div className="mt-6 text-[14px] text-body2">
-              <p className="font-bold text-ink">Global HQ</p>
+              <p className="font-bold text-ink">Head Office</p>
               <p className="mt-1">
-                Energy Plaza, Level 14 · Dubai, UAE
+                7A, Muthu Vinayagar Koil Street, Panagudi Post,
                 <br />
-                +971 4 000 0000 · crew@energytalents.com
+                Radhapuram Taluk, Tirunelveli District,
+                <br />
+                Tamil Nadu, India — 627109
+              </p>
+              <p className="mt-2">
+                <a href="tel:+919176674449" className="hover:text-brand">
+                  +91 91766 74449
+                </a>{" "}
+                ·{" "}
+                <a
+                  href="mailto:immanuel@energytalentz.com"
+                  className="hover:text-brand"
+                >
+                  immanuel@energytalentz.com
+                </a>
               </p>
             </div>
             <div className="mt-6 flex gap-3">

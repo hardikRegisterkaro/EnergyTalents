@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { ResumeModalButton } from "./ResumeModal";
+import { TAILOR_INTENT } from "./resume-intents";
 
 /**
  * "Smart Tailoring" — a dark purple gradient banner: framed photo (with a match
@@ -62,13 +64,13 @@ export default function TailorBanner() {
                 the employer&rsquo;s exact requirements — surfacing the keywords
                 and skills you need to pass the ATS screening.
               </p>
-              <button
-                type="button"
+              <ResumeModalButton
+                intent={TAILOR_INTENT}
                 className="mt-6 rounded-xl px-6 py-[15px] font-body text-sm font-semibold text-white shadow-[0_14px_17px_-4px_rgba(255,122,0,0.55)] transition-transform hover:-translate-y-0.5"
                 style={{ backgroundImage: ACCENT_GRADIENT }}
               >
                 Tailor My Resume Now
-              </button>
+              </ResumeModalButton>
             </div>
           </div>
         </div>

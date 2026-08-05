@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { ResumeModalButton } from "./ResumeModal";
+import { TEMPLATES_INTENT } from "./resume-intents";
 
 /**
  * "Template Library" — a staircase cascade of three template previews on the
@@ -51,12 +53,12 @@ export default function Templates() {
             Choose from hundreds of professionally designed, ATS-friendly
             templates — thousands of combinations made to help you stand out.
           </p>
-          <a
-            href="#"
+          <ResumeModalButton
+            intent={TEMPLATES_INTENT}
             className="mt-6 inline-flex items-center justify-center rounded-xl border-[1.5px] border-[#b8b0a8] px-6 py-3.5 font-body text-sm font-semibold text-[#231a14] transition-colors hover:border-[#231a14]"
           >
             Search Templates
-          </a>
+          </ResumeModalButton>
         </div>
       </div>
     </section>

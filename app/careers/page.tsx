@@ -13,10 +13,10 @@ export const metadata: Metadata = {
 };
 
 const STATS = [
-  { value: "320", accent: "+", label: "Open roles" },
-  { value: "45", accent: "", label: "Countries" },
-  { value: "24", accent: "h", label: "Avg. response" },
-  { value: "94", accent: "%", label: "Retention" },
+  { value: "Global", accent: "", label: "Deployment reach" },
+  { value: "24/7", accent: "", label: "Rotation support" },
+  { value: "0", accent: " fees", label: "Contractors never pay" },
+  { value: "End-to-end", accent: "", label: "Visas · travel · payroll" },
 ];
 
 const FEATURED = [

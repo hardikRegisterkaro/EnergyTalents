@@ -40,15 +40,10 @@ const DISCIPLINES = [
 ];
 
 const STATS = [
-  { target: "72", number: "72", suffix: "h", label: "Vetted shortlist" },
-  { target: "80", number: "80", suffix: "+", label: "Regional entities" },
-  { target: "2200", number: "2,200", suffix: "+", label: "Active clients" },
-  {
-    target: "24000",
-    number: "24,000",
-    suffix: "+",
-    label: "Deployed contractors",
-  },
+  { number: "Fast", suffix: "", label: "Vetted shortlist" },
+  { number: "Global", suffix: "", label: "Deployment reach" },
+  { number: "24/7", suffix: "", label: "Rotation support" },
+  { number: "0", suffix: " fees", label: "Contractors never pay" },
 ];
 
 // Column dividers: none on the first item of each row, present otherwise —
@@ -142,9 +137,7 @@ export default function DisciplinesSection() {
                 className={statDivider(i)}
               >
                 <div className="flex items-baseline font-archivo text-4xl font-extrabold leading-none text-stone-900 sm:text-5xl">
-                  <span className="counter" data-target={s.target}>
-                    {s.number}
-                  </span>
+                  <span>{s.number}</span>
                   <span className="text-orange-500">{s.suffix}</span>
                 </div>
                 <div className="mt-3 font-jbmono text-[11px] uppercase tracking-wider text-gray-500">
