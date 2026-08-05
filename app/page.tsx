@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { displayFontVars } from "./display-fonts";
 import SolutionsGrid from "./SolutionsGrid";
@@ -25,9 +26,9 @@ const REQUEST_CREW_HREF = "/contact-us";
 const ACCENT_GRADIENT = { backgroundImage: "linear-gradient(350deg, #f59e0b, #f97316)" };
 
 const BADGES = [
-  "Tier-1 Operator Approved",
-  "100% HSSE Rating",
-  "Single Global Contract",
+  "Vetted technical crews",
+  "24/7 rotation support",
+  "Single global contract",
 ];
 
 export default function Home() {
@@ -36,11 +37,14 @@ export default function Home() {
       {/* Hero — floating inset block ------------------------------- */}
       <div className="p-2 sm:p-3">
         <section className="relative overflow-hidden rounded-[28px] bg-neutral-950 px-4 py-16 sm:px-6 md:py-24">
-        {/* Background — rig-at-sunset photo */}
-        <div
-          aria-hidden
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url('/homeHero.png')" }}
+        {/* Background — rig-at-sunset photo (optimized, LCP → priority) */}
+        <Image
+          src="/homeHero.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
         />
         {/* Subtle darkening for text contrast over any photo */}
         <div aria-hidden className="absolute inset-0 bg-black/20" />

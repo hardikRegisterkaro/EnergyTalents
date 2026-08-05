@@ -178,10 +178,10 @@ export default function LegalPage() {
               to object to processing, and to data portability. To exercise any of
               these, contact us at{" "}
               <a
-                href="mailto:privacy@energytalents.com"
+                href="mailto:immanuel@energytalentz.com"
                 className="font-semibold text-brand hover:underline"
               >
-                privacy@energytalents.com
+                immanuel@energytalentz.com
               </a>
               .
             </P>
@@ -295,10 +295,10 @@ export default function LegalPage() {
                   Contact Us →
                 </Link>
                 <a
-                  href="mailto:privacy@energytalents.com"
+                  href="mailto:immanuel@energytalentz.com"
                   className="btn-lift inline-flex items-center rounded-xl border border-ink/20 px-5 py-3 font-body text-sm font-semibold text-ink hover:border-ink/40"
                 >
-                  privacy@energytalents.com
+                  immanuel@energytalentz.com
                 </a>
               </div>
             </div>

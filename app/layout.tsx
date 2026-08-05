@@ -18,7 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://energytalents.com"),
+  metadataBase: new URL("https://energytalentz.com"),
   title: {
     default: "Energy Talents — Technical Crewing for Global Energy Projects",
     template: "%s · Energy Talents",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "Energy Talents",
     title: "Energy Talents — Technical Crewing for Global Energy Projects",
     description:
-      "Two decades mobilizing 25,000+ technical professionals across 40+ countries.",
+      "Skilled technical crews recruited and mobilized from India to energy projects worldwide.",
   },
 };
 

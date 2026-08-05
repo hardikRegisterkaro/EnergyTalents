@@ -50,7 +50,7 @@ export default async function ArticlePage({ params }: Params) {
 
   const author = AUTHORS[article.initials];
   const related = relatedArticles(article.slug, 3);
-  const url = `https://energytalents.com/blog/${article.slug}`;
+  const url = `https://energytalentz.com/blog/${article.slug}`;
   const share = {
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
     x: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(article.title)}`,

@@ -1,8 +1,7 @@
+import Image from "next/image";
+
 /**
- * "Long-term staffing partner" — two-column intro (copy + framed image) over a
- * four-stat bar. The stats use the site-wide count-up (`.counter[data-target]`
- * animated by RevealInit); the server-rendered text is the final value so it's
- * correct with JS disabled.
+ * "Long-term staffing partner" — two-column intro (copy + framed image).
  */
 
 const FEATURES = [
@@ -11,20 +10,6 @@ const FEATURES = [
   "Cross-border payroll",
   "Dedicated account desk",
 ];
-
-type Stat = { target: string; suffix: string; display: string; label: string };
-
-const STATS: Stat[] = [
-  { target: "80", suffix: "+", display: "80+", label: "Regional Entities" },
-  { target: "50", suffix: "+", display: "50+", label: "Combined Years Experience" },
-  { target: "2200", suffix: "+", display: "2,200+", label: "Active Clients" },
-  { target: "24000", suffix: "+", display: "24,000+", label: "Deployed Contractors" },
-];
-
-// Warm industrial placeholder — swap for real crew/site photography.
-const IMAGE_STYLE = {
-  backgroundImage: "url('/oil-rig.svg')",
-};
 
 export default function StaffingPartner() {
   return (
@@ -65,12 +50,15 @@ export default function StaffingPartner() {
 
         {/* Framed image */}
         <div data-aos="fade-up" data-aos-delay="120" className="relative">
-          <div
-            className="aspect-[557/460] w-full overflow-hidden bg-neutral-900 bg-cover bg-center"
-            style={IMAGE_STYLE}
-            role="img"
-            aria-label="Offshore drilling platform at sea"
-          />
+          <div className="relative aspect-[557/460] w-full overflow-hidden bg-neutral-900">
+            <Image
+              src="/oil-rig.webp"
+              alt="Offshore drilling platform at sea"
+              fill
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              className="object-cover"
+            />
+          </div>
           {/* amber corner brackets */}
           <span
             aria-hidden
@@ -81,31 +69,6 @@ export default function StaffingPartner() {
             className="pointer-events-none absolute -bottom-3 -left-3 size-14 border-b-2 border-l-2 border-amber-500"
           />
         </div>
-      </div>
-
-      {/* Stat bar */}
-      <div className="mt-16 grid grid-cols-2 gap-y-10 border-t border-stone-200 pt-12 md:mt-20 md:grid-cols-4 md:gap-y-0">
-        {STATS.map((s, i) => (
-          <div
-            key={s.label}
-            data-aos="fade-up"
-            data-aos-delay={`${i * 80}`}
-            className={
-              i > 0 ? "md:border-l md:border-stone-200 md:pl-8" : undefined
-            }
-          >
-            <div
-              className="counter font-archivo text-5xl font-bold leading-none text-stone-900 sm:text-6xl"
-              data-target={s.target}
-              data-suffix={s.suffix}
-            >
-              {s.display}
-            </div>
-            <div className="mt-4 font-jbmono text-xs tracking-tight text-stone-500">
-              {s.label}
-            </div>
-          </div>
-        ))}
       </div>
     </>
   );

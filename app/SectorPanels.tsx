@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCarousel } from "./useCarousel";
 
@@ -14,34 +15,45 @@ type Sector = {
   n: string;
   title: string;
   body: string;
-  /** Background layers — swap for real sector photography when available. */
-  bg: string;
+  /** Sector photo — served through next/image (optimized, lazy-loaded). */
+  src: string;
+  /** Object focal point — these shots frame the rig mid/right, so bias the
+   *  tall-panel crop rightward instead of the default center. */
+  pos: string;
 };
+
+/** Darkening scrim over the photo so the index + label stay legible. */
+const SCRIM =
+  "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%)";
 
 const SECTORS: Sector[] = [
   {
     n: "01",
     title: "Renewable\nPower",
     body: "Wind technicians, solar EPC crews and grid specialists driving the energy transition.",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%), url('/offshore-drilling-rig.svg')",
+    src: "/offshore-drilling-rig.webp",
+    pos: "72% center",
   },
   {
     n: "02",
     title: "Oil &\nGas",
     body: "Drilling, commissioning & turnaround specialists for upstream and downstream operations.",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%), url('/silhouette-oil-rig.svg')",
+    src: "/silhouette-oil-rig.webp",
+    pos: "70% center",
   },
   {
     n: "03",
     title: "Infrastructure\n& Civil",
     body: "Heavy civil, EPC and processing crews for resource and infrastructure megaprojects.",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%), url('/oil-rig.svg')",
+    src: "/oil-rig.webp",
+    pos: "62% center",
   },
   {
     n: "04",
     title: "Maritime\n& Offshore",
     body: "Marine crew, DP operators and deck & engine officers for vessels, rigs and FPSOs.",
-    bg: "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%), url('/semi-submersible-oil.svg')",
+    src: "/semi-submersible-oil.webp",
+    pos: "66% center",
   },
 ];
 
@@ -86,11 +98,19 @@ export default function SectorPanels() {
             data-aos="fade-up"
             className="group relative block h-[400px] w-[72%] shrink-0 snap-start overflow-hidden outline outline-1 -outline-offset-1 outline-stone-200 sm:w-auto lg:h-[560px]"
           >
-            {/* Background (gradient placeholder) */}
+            {/* Sector photo (optimized) + scrim overlay */}
+            <Image
+              src={s.src}
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 72vw"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              style={{ objectPosition: s.pos }}
+            />
             <div
               aria-hidden
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 ease-out group-hover:scale-105"
-              style={{ backgroundImage: s.bg }}
+              className="absolute inset-0"
+              style={{ background: SCRIM }}
             />
 
             {/* Index */}

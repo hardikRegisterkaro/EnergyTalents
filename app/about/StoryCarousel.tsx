@@ -2,18 +2,19 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+// Deployment regions our India-based desk places crews into.
 const HUBS = [
-  { tag: "Global HQ", city: "Dubai, UAE", desk: "Middle East & Africa desk", accent: true },
-  { tag: "Hub", city: "Aberdeen, UK", desk: "Europe & North Sea desk" },
-  { tag: "Hub", city: "Singapore", desk: "Asia-Pacific desk" },
-  { tag: "Hub", city: "Houston, US", desk: "Americas desk" },
+  { tag: "Region", city: "Middle East & Africa", desk: "Upstream, downstream & EPC" },
+  { tag: "Region", city: "Europe & North Sea", desk: "Offshore & marine" },
+  { tag: "Region", city: "Asia-Pacific", desk: "Oil, gas & renewables" },
+  { tag: "Region", city: "The Americas", desk: "Onshore & offshore" },
 ];
 
 const TIMELINE = [
-  { year: "2006", title: "Founded in Dubai", body: "Two desks, one phone, first drilling crew placed in 11 days." },
-  { year: "2013", title: "North Sea & marine desks open", body: "Aberdeen office launches offshore and MLC-compliant marine crewing." },
-  { year: "2020", title: "Renewables practice launches", body: "First GWO-certified wind crews deployed across three continents." },
-  { year: "2026", title: "Talent Cloud launches", body: "200k-profile database with automated compliance parsing goes live." },
+  { year: "01", title: "Source", body: "Vetted technical talent matched to your discipline and scope." },
+  { year: "02", title: "Screen", body: "Certifications, medicals and competency checked before travel." },
+  { year: "03", title: "Mobilize", body: "Visas, flights and onboarding arranged end to end." },
+  { year: "04", title: "Support", body: "A duty desk on call through the whole rotation." },
 ];
 
 const SLIDES = 2;
@@ -108,9 +109,8 @@ export default function StoryCarousel() {
                   for lack of crew
                 </h2>
                 <p className="mt-4 max-w-[300px] text-[15px] leading-relaxed text-white/85">
-                  Every milestone we&apos;ve hit exists to make one thing
-                  faster: getting the right person to the right site, compliant
-                  and ready.
+                  Everything we do exists to make one thing faster: getting the
+                  right person to the right site, compliant and ready.
                 </p>
                 <div className="mt-7 flex gap-3">
                   <a
@@ -129,7 +129,7 @@ export default function StoryCarousel() {
               </div>
               <div className="relative">
                 <div className="overflow-hidden rounded-xl bg-white shadow-2xl lg:absolute lg:inset-x-0 lg:-bottom-2 lg:top-2">
-                  <WindowBar badge="20 years" />
+                  <WindowBar badge="How we work" />
                   <div className="grid gap-2.5 p-4">
                     {TIMELINE.map((t) => (
                       <div
@@ -163,23 +163,23 @@ export default function StoryCarousel() {
             <div className="grid min-h-[480px] gap-8 p-8 lg:grid-cols-[0.42fr_0.58fr] lg:p-10">
               <div className="flex flex-col justify-center">
                 <span className="self-start rounded-full bg-white/20 px-3.5 py-1.5 text-[12.5px] font-semibold text-white">
-                  Global Presence
+                  Global Deployment
                 </span>
                 <h2 className="mt-5 font-display text-[clamp(1.8rem,3vw,2.6rem)] font-bold leading-[1.08] text-white">
-                  Four hubs,
+                  Crews placed
                   <br />
-                  every time zone
+                  worldwide
                 </h2>
                 <p className="mt-4 max-w-[300px] text-[15px] leading-relaxed text-white/85">
-                  A mobilization desk is always awake. Crews are managed
-                  in-region, by people who&apos;ve worked the same sites.
+                  We recruit and mobilize from India, placing crews across the
+                  world&apos;s energy regions — screened, compliant and ready.
                 </p>
                 <div className="mt-7 flex gap-3">
                   <a
                     href="#offices"
                     className="btn-lift rounded-lg bg-white px-5 py-3 text-[14px] font-bold text-brand"
                   >
-                    See Our Offices
+                    Where We Work
                   </a>
                 </div>
               </div>
@@ -193,11 +193,7 @@ export default function StoryCarousel() {
                         className="rounded-xl border border-linec p-4"
                       >
                         <div className="flex items-center justify-between">
-                          <span
-                            className={`text-[11.5px] font-bold ${
-                              h.accent ? "text-brand" : "font-semibold text-stone-500"
-                            }`}
-                          >
+                          <span className="text-[11.5px] font-semibold text-stone-500">
                             {h.tag}
                           </span>
                           <span className="h-2 w-2 rounded-full bg-emerald-500" />

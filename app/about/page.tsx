@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import StoryCarousel from "./StoryCarousel";
-import LeadershipCarousel from "./LeadershipCarousel";
 import ValuesCarousel from "./ValuesCarousel";
 import OfficesCarousel from "./OfficesCarousel";
 import { IconBolt, IconSun, IconArrowRight } from "./icons";
@@ -9,7 +8,7 @@ import { IconBolt, IconSun, IconArrowRight } from "./icons";
 export const metadata: Metadata = {
   title: "About Us",
   description:
-    "Two decades in energy crewing. We mobilize 25,000+ technical professionals across 40+ countries — and still answer the phone at 3am when a rotation goes sideways.",
+    "Energy crewing specialists based in Tamil Nadu, India. We recruit, vet and mobilize skilled technical crews to energy projects worldwide — and stay reachable when a rotation goes sideways.",
   alternates: { canonical: "/about" },
 };
 
@@ -17,42 +16,12 @@ export const metadata: Metadata = {
 
 const HUBS = [
   {
-    tag: "Global HQ",
-    city: "Dubai, UAE",
-    addr: "Energy Plaza, Level 14",
-    desk: "Middle East & Africa desk",
-    coords: "25.20°N, 55.27°E · GMT+4",
+    tag: "Head Office",
+    city: "Tirunelveli, India",
+    addr: "Muthu Vinayagar Koil Street, Panagudi",
+    desk: "Recruitment & mobilization desk",
+    coords: "8.35°N, 77.63°E · GMT+5:30",
   },
-  {
-    tag: "Regional Hub",
-    city: "Aberdeen, UK",
-    addr: "Queens Terrace",
-    desk: "Europe & North Sea desk",
-    coords: "57.15°N, 2.09°W · GMT",
-  },
-  {
-    tag: "Regional Hub",
-    city: "Singapore",
-    addr: "Marina Bay Financial Centre",
-    desk: "Asia-Pacific desk",
-    coords: "1.35°N, 103.82°E · GMT+8",
-  },
-  {
-    tag: "Regional Hub",
-    city: "Houston, US",
-    addr: "Energy Corridor",
-    desk: "Americas desk",
-    coords: "29.76°N, 95.37°W · GMT-6",
-  },
-];
-
-const CLIENTS = [
-  "MERIDIAN energy",
-  "CAWLEY⟡MARINE",
-  "Helix Offshore",
-  "BOREALIS WIND",
-  "Sable Construct",
-  "NORDPETRO",
 ];
 
 const ROLES_ROW_1 = [
@@ -81,38 +50,11 @@ const ROLES_ROW_2 = [
   "Geotechnical Engineer",
 ];
 
-const HSE_STATS = [
-  {
-    target: "0.11",
-    suffix: "",
-    label: "LTIFR (12-month rolling)",
-    body: "Lost Time Injury Frequency Rate per 200,000 hours worked — against an industry benchmark of 0.34.",
-  },
-  {
-    target: "4.2",
-    suffix: "M",
-    label: "Man-hours LTI-free",
-    body: "Cumulative hours worked across live projects without a lost-time incident.",
-  },
-  {
-    target: "100",
-    suffix: "%",
-    label: "Fit-for-Duty screened",
-    body: "No contractor travels without a cleared medical, valid certification and role-specific competency sign-off.",
-  },
-  {
-    target: "24",
-    suffix: "h",
-    label: "Incident review window",
-    body: "Every reported event is investigated and reported to the client within one working day.",
-  },
-];
-
 const PROTOCOLS = [
   {
     tag: "Protocol 01",
     title: "Stop Work Authority",
-    body: "Every contractor we place carries unconditional authority to stop a job they believe is unsafe — and our contracts protect their pay and position when they use it. We have never billed a client for a stoppage.",
+    body: "Every contractor we place carries unconditional authority to stop a job they believe is unsafe — and our contracts protect their pay and position when they use it.",
   },
   {
     tag: "Protocol 02",
@@ -122,57 +64,13 @@ const PROTOCOLS = [
   {
     tag: "Protocol 03",
     title: "Emergency Mobilization",
-    body: "A duty manager is reachable in every hub, every hour. Medevac coordination, next-of-kin protocol and replacement crew activation run from one escalation chain.",
+    body: "A duty manager is reachable every hour. Medevac coordination, next-of-kin protocol and replacement crew activation run from one escalation chain.",
   },
   {
     tag: "Protocol 04",
     title: "Audit & Assurance",
-    body: "ISO 45001-aligned management system, client-witnessed audits on request, and quarterly HSE performance reporting delivered to your ops team unprompted.",
+    body: "An ISO 45001-aligned way of working, client-witnessed audits on request, and HSE performance reporting delivered to your ops team unprompted.",
   },
-];
-
-const LEADERS = [
-  {
-    initials: "RA",
-    name: "Rashid Al-Farsi",
-    role: "Chief Executive · Founder",
-    tag: "14 yrs on the rig floor",
-    bio: "14 years as a drilling supervisor in the Gulf before founding Energy Talents in 2006. Still reviews every Tier-1 mobilization plan.",
-  },
-  {
-    initials: "EM",
-    name: "Elin Moreno",
-    role: "Chief Operations Officer",
-    tag: "Ex-EPC logistics",
-    bio: "Ex-EPC logistics director; built the 72-hour mobilization pipeline that now runs across four continents.",
-  },
-  {
-    initials: "DO",
-    name: "David Okonkwo",
-    role: "Head of Compliance & HSE",
-    tag: "Ex-offshore HSE lead",
-    bio: "Former offshore HSE lead; owns the 99.4% compliance pass rate and intends to keep it there.",
-  },
-  {
-    initials: "PL",
-    name: "Priya Lakshmi",
-    role: "Head of Talent Cloud",
-    tag: "200k-profile database",
-    bio: "Leads the 200k-profile database and the energy-specific ATS that beats the keyword filters.",
-  },
-];
-
-const BIG_STATS = [
-  { target: "20", suffix: "", label: "Years in operation" },
-  { target: "80", suffix: "+", label: "Nationalities on rotation" },
-  { target: "25000", suffix: "+", label: "Talents mobilized to date" },
-  { target: "99.4", suffix: "%", label: "Compliance pass rate" },
-];
-
-const CERTS = [
-  { abbr: "ISO", title: "ISO 9001 & 45001", note: "Quality & safety certified" },
-  { abbr: "OP", title: "OPITO & GWO", note: "Approved training standards" },
-  { abbr: "MLC", title: "MLC 2006", note: "Maritime labour compliant" },
 ];
 
 const CRISIS = [
@@ -180,7 +78,7 @@ const CRISIS = [
     n: "01",
     title: "Flagged & acknowledged",
     when: "Within 15 minutes",
-    body: "One number reaches a named duty manager in the nearest hub — never a call centre, never a ticket queue. The contractor, the client rep and the desk lead are on the same thread immediately.",
+    body: "One number reaches a named duty manager on our desk — never a call centre, never a ticket queue. The contractor, the client rep and the desk lead are on the same thread immediately.",
   },
   {
     n: "02",
@@ -204,19 +102,19 @@ const CRISIS = [
 
 const ROLES = [
   {
-    where: "Dubai · Hybrid",
+    where: "Tirunelveli · On-site",
     title: "Senior Recruiter — Drilling & Wells",
     body: "Own the drilling desk. Field experience in wells or rig operations required.",
   },
   {
-    where: "Aberdeen · On-site",
-    title: "Mobilization Coordinator — North Sea",
-    body: "Run visas, medicals, and travel for offshore rotations across the UK & Norwegian sectors.",
+    where: "Tirunelveli · Hybrid",
+    title: "Mobilization Coordinator",
+    body: "Run visas, medicals, and travel for offshore rotations across international sectors.",
   },
   {
-    where: "Singapore · Hybrid",
-    title: "Compliance Analyst — Talent Cloud",
-    body: "Keep the 99.4% pass rate honest: certification verification and audit tooling.",
+    where: "Remote · India",
+    title: "Compliance Analyst",
+    body: "Keep our vetting honest: certification verification and audit tooling.",
   },
 ];
 
@@ -231,10 +129,10 @@ export default function AboutPage() {
           <div className="pointer-events-none absolute inset-x-0 top-0 h-72 dotbg opacity-60" />
           <div className="relative mx-auto max-w-[1216px] px-6 text-center">
             <span className="reveal inline-flex items-center gap-2 rounded-full border border-linec bg-white px-4 py-2 shadow-[0_6px_20px_-10px_rgba(30,27,22,.2)]">
-              <span className="text-[13.5px] text-body2">Established 2006</span>
+              <span className="text-[13.5px] text-body2">India-based</span>
               <IconBolt className="h-4 w-4 text-brand" />
               <span className="text-[13.5px] font-bold text-ink">
-                Two decades in energy
+                Energy crewing specialists
               </span>
             </span>
             <h1 className="reveal mx-auto mt-7 font-display text-[clamp(1.75rem,4.2vw,2.9rem)] font-bold leading-[1.06] tracking-tight text-ink text-balance">
@@ -243,53 +141,31 @@ export default function AboutPage() {
               <span className="o-text">crews that power</span> the world
             </h1>
             <p className="reveal mx-auto mt-6 max-w-[640px] text-[17px] leading-relaxed text-body2">
-              We started as a two-desk crewing agency in Dubai. Today we mobilize
-              25,000+ technical professionals across 40+ countries — and we still
-              answer the phone at 3am when a rotation goes sideways.
+              From our base in Tamil Nadu, we recruit, vet and mobilize skilled
+              technical crews to energy projects worldwide — and we still answer
+              the phone when a rotation goes sideways.
             </p>
             <div className="reveal mt-8 flex justify-center gap-3">
               <Link
-                href="#team"
+                href="#story"
                 className="btn-grad inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-[15px] font-semibold"
               >
-                Meet the Team <IconArrowRight className="h-4 w-4" />
+                Our Story <IconArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="#story"
+                href="/contact-us"
                 className="btn-lift inline-flex items-center rounded-full border border-linec bg-white px-7 py-3.5 text-[15px] font-semibold text-ink hover:border-brand-400"
               >
-                Our Story
+                Contact Us
               </Link>
             </div>
           </div>
         </section>
 
-        {/* Story carousel (mission + global presence) ----------------- */}
+        {/* Story carousel (mission + how we work) --------------------- */}
         <section id="story" className="bg-white pb-6">
           <div className="mx-auto max-w-[1216px] px-6">
             <StoryCarousel />
-          </div>
-        </section>
-
-        {/* Client marquee --------------------------------------------- */}
-        <section className="bg-white py-16">
-          <div className="mx-auto max-w-6xl px-6">
-            <p className="mb-8 text-center text-sm font-medium text-ink/50 reveal">
-              Twenty years of repeat business with operators, EPC contractors &
-              developers
-            </p>
-          </div>
-          <div className="marquee-track relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_12%,black_88%,transparent)]">
-            <div className="marquee gap-14 pr-14">
-              {[...CLIENTS, ...CLIENTS].map((c, i) => (
-                <span
-                  key={i}
-                  className="whitespace-nowrap font-display text-xl font-semibold tracking-tight text-ink/35"
-                >
-                  {c}
-                </span>
-              ))}
-            </div>
           </div>
         </section>
 
@@ -367,7 +243,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* HSE stats + protocols -------------------------------------- */}
+        {/* HSE protocols ---------------------------------------------- */}
         <section id="hse" className="bg-white py-24">
           <div className="mx-auto max-w-[1216px] px-6">
             <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
@@ -381,39 +257,12 @@ export default function AboutPage() {
                 </h2>
               </div>
               <p className="reveal max-w-[420px] text-[15px] leading-relaxed text-body2">
-                Every crew we mobilize is covered by the same audited HSE
-                protocol — no client exemptions, no schedule pressure, no
-                exceptions. These are the numbers our clients audit us on.
+                Every crew we mobilize is covered by the same HSE protocol — no
+                client exemptions, no schedule pressure, no exceptions.
               </p>
             </div>
 
-            <div className="mt-11 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {HSE_STATS.map((s, i) => (
-                <div
-                  key={s.label}
-                  className="card softshadow reveal p-6"
-                  style={{ ["--reveal-delay" as string]: `${i * 80}ms` }}
-                >
-                  <div className="font-display text-[38px] font-bold leading-none o-text">
-                    <span
-                      className="counter"
-                      data-target={s.target}
-                      data-suffix={s.suffix}
-                    >
-                      0
-                    </span>
-                  </div>
-                  <div className="mt-3 text-[14px] font-bold text-ink">
-                    {s.label}
-                  </div>
-                  <p className="mt-1 text-[13px] leading-relaxed text-body2">
-                    {s.body}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 grid overflow-hidden rounded-[18px] border border-linec bg-linec md:grid-cols-2 lg:grid-cols-4 gap-px">
+            <div className="mt-11 grid overflow-hidden rounded-[18px] border border-linec bg-linec md:grid-cols-2 lg:grid-cols-4 gap-px">
               {PROTOCOLS.map((p) => (
                 <div key={p.tag} className="hse-tile bg-white p-7">
                   <div className="text-[11.5px] font-bold uppercase tracking-[.14em] text-stone-400">
@@ -431,90 +280,8 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Leadership ------------------------------------------------- */}
-        <section id="team" className="bg-cream dotbg border-y border-linec/60 py-24">
-          <div className="mx-auto max-w-[1216px] px-6">
-            <div className="reveal text-[12px] font-bold uppercase tracking-[.18em] o-text">
-              Leadership
-            </div>
-            <h2 className="reveal mt-3 max-w-[620px] font-display text-[clamp(1.6rem,3vw,2.375rem)] font-bold leading-[1.12] tracking-tight text-ink">
-              Run by people who&apos;ve worked the sites
-            </h2>
-            <p className="reveal mt-4 max-w-[560px] text-[15.5px] leading-relaxed text-body2">
-              Every desk lead has field experience in the discipline they staff.
-              It&apos;s why our vetting catches what keyword filters miss.
-            </p>
-            <LeadershipCarousel leaders={LEADERS} />
-            <div className="reveal mt-6 hidden items-center justify-center gap-2 text-[13px] text-body2 sm:flex">
-              <span className="grad inline-block h-1.5 w-1.5 rounded-full" />
-              Hover a portrait to read their story
-            </div>
-          </div>
-        </section>
-
-        {/* Twenty years in numbers (deep gradient) -------------------- */}
-        <section className="grad-deep dotbg-dark py-24 text-white">
-          <div className="mx-auto max-w-[1216px] px-6">
-            <div className="grid items-center gap-12 lg:grid-cols-2">
-              <div>
-                <span className="reveal inline-block rounded-full bg-white/20 px-4 py-1.5 text-[12.5px] font-semibold text-white">
-                  Twenty years in numbers
-                </span>
-                <h2 className="reveal mt-5 font-display text-[clamp(1.6rem,3vw,2.375rem)] font-bold leading-[1.12] tracking-tight">
-                  Built rotation by rotation since 2006.
-                </h2>
-                <p className="reveal mt-4 max-w-[440px] text-[15.5px] leading-relaxed text-white/85">
-                  From one office and a phone to the workforce engine behind
-                  projects in over 40 countries.
-                </p>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {BIG_STATS.map((s, i) => (
-                  <div
-                    key={s.label}
-                    className="stat-card reveal rounded-2xl border border-white/25 bg-white/5 p-6"
-                    style={{ ["--reveal-delay" as string]: `${i * 80}ms` }}
-                  >
-                    <div className="font-display text-[38px] font-bold leading-none">
-                      <span
-                        className="counter"
-                        data-target={s.target}
-                        data-suffix={s.suffix}
-                      >
-                        0
-                      </span>
-                    </div>
-                    <div className="stat-bar" />
-                    <p className="mt-3 text-[13.5px] font-medium text-white/85">
-                      {s.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mt-14 grid gap-5 md:grid-cols-3">
-              {CERTS.map((c) => (
-                <div
-                  key={c.abbr}
-                  className="reveal flex items-center gap-4 rounded-2xl bg-white p-5 shadow-lg"
-                >
-                  <span className="font-display text-[12px] font-bold text-brand">
-                    {c.abbr}
-                  </span>
-                  <div>
-                    <p className="font-display text-[15px] font-bold text-ink">
-                      {c.title}
-                    </p>
-                    <p className="text-[13px] text-body2">{c.note}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Crisis management ------------------------------------------ */}
-        <section id="crisis" className="bg-white py-20 md:py-24">
+        <section id="crisis" className="bg-white py-20 md:py-24 border-t border-linec/60">
           <div className="mx-auto max-w-[1216px] px-6">
             <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end">
               <div>
@@ -557,17 +324,17 @@ export default function AboutPage() {
             </ol>
 
             <div className="card softshadow mt-5 grid gap-6 p-7 sm:grid-cols-3">
-              <MiniStat big="15 min" small="Acknowledgement standard — any hour, any hub" />
-              <MiniStat big="4 hubs" small="Duty managers on rotation across all time zones" />
-              <MiniStat big="Zero" small="Escalations routed to voicemail since 2006" />
+              <MiniStat big="15 min" small="Acknowledgement standard — any hour, any day" />
+              <MiniStat big="24/7" small="A duty manager reachable, every rotation" />
+              <MiniStat big="Zero" small="Escalations left sitting in a voicemail queue" />
             </div>
           </div>
         </section>
 
-        {/* Offices ---------------------------------------------------- */}
+        {/* Office ----------------------------------------------------- */}
         <section
           id="offices"
-          className="bg-cream py-24 border-b border-linec/60"
+          className="bg-cream py-24 border-y border-linec/60"
         >
           <div className="mx-auto max-w-[1216px] px-6">
             <div className="text-center">
@@ -575,7 +342,7 @@ export default function AboutPage() {
                 Where we work
               </span>
               <h2 className="reveal mt-5 font-display text-[clamp(1.6rem,3vw,2.375rem)] font-bold leading-[1.12] tracking-tight text-ink">
-                Four hubs, <span className="o-text">one pipeline</span>
+                One base, <span className="o-text">global reach</span>
               </h2>
             </div>
             <OfficesCarousel hubs={HUBS} />
