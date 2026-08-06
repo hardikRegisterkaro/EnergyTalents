@@ -3,6 +3,7 @@ import { FilterProvider } from "./FilterContext";
 import HeroSearch from "./HeroSearch";
 import RolesExplorer from "./RolesExplorer";
 import { getRoles, PAGE_SIZE } from "./roles-api";
+import { getCareersContent } from "./careers-content";
 import Link from "next/link";
 import PipelineForm from "./PipelineForm";
 
@@ -13,69 +14,11 @@ export const metadata: Metadata = {
   alternates: { canonical: "/careers" },
 };
 
-const STATS = [
-  { value: "Global", accent: "", label: "Deployment reach" },
-  { value: "24/7", accent: "", label: "Rotation support" },
-  { value: "0", accent: " fees", label: "Contractors never pay" },
-  { value: "End-to-end", accent: "", label: "Visas · travel · payroll" },
-];
 
 /** The hero panel shows the four most recent roles flagged Featured in the CMS. */
 const FEATURED_LIMIT = 4;
 
-const BENEFITS = [
-  {
-    title: "Compliant global payroll",
-    body: "Paid correctly, on time, in your currency — through owned legal entities in 80+ regions.",
-  },
-  {
-    title: "Visas & mobility handled",
-    body: "Work permits, medicals, travel and accommodation organised end to end before you fly.",
-  },
-  {
-    title: "Competitive day rates",
-    body: "Transparent, benchmarked rates with no hidden agency margins eating your earnings.",
-  },
-  {
-    title: "Tickets & certifications",
-    body: "Support keeping OPITO, GWO, BOSIET and discipline tickets current and funded.",
-  },
-  {
-    title: "One dedicated desk",
-    body: "A single named account manager who knows your file across every rotation and region.",
-  },
-  {
-    title: "Long-term continuity",
-    body: "Back-to-back rotations and a pipeline of projects — not one job, then silence.",
-  },
-];
 
-const STEPS = [
-  {
-    num: "01",
-    kicker: "Apply",
-    title: "Apply once",
-    body: "Submit your CV and tickets a single time. We match you to every relevant live rotation.",
-  },
-  {
-    num: "02",
-    kicker: "Screen & verify",
-    title: "Vetting & checks",
-    body: "Technical screening, ticket validation and background checks against discipline standards.",
-  },
-  {
-    num: "03",
-    kicker: "Mobilize",
-    title: "Mobilization",
-    body: "Offer, contract, visa, medical and travel — all arranged by your dedicated desk.",
-  },
-  {
-    num: "04",
-    kicker: "Deploy",
-    title: "On-site & paid",
-    body: "Onboarding, HSE briefing and compliant local payroll from your very first shift.",
-  },
-];
 
 const TESTIMONIALS = [
   {
@@ -104,17 +47,13 @@ const TESTIMONIALS = [
   },
 ];
 
-const PIPELINE_POINTS = [
-  "One profile, matched to every relevant rotation",
-  "First-access alerts before roles go public",
-  "A dedicated desk that keeps your tickets current",
-];
 
 export default async function CareersPage() {
   // Both reads are cached and tagged, so the CMS's revalidate call after a
   // career edit refreshes them without a redeploy. Fetched in parallel — the
   // featured panel and the listing are independent.
-  const [listing, featured] = await Promise.all([
+  const [content, listing, featured] = await Promise.all([
+    getCareersContent(),
     // Only the first page — the explorer fetches subsequent pages itself, so
     // the browser never receives the whole table at once.
     getRoles({ page: 1, limit: PAGE_SIZE }),
@@ -142,19 +81,17 @@ export default async function CareersPage() {
               <div className="flex items-center gap-3.5">
                 <span className="h-[1.5px] w-6 shrink-0 bg-orange-500" />
                 <span className="font-jbmono text-xs font-medium tracking-[0.24em] text-orange-500">
-                  BUILD WITH ENERGY TALENTS
+                  {content.hero.kicker}
                 </span>
               </div>
 
               <h1 className="py-5 font-archivo text-[28px] font-black uppercase leading-[1.08] text-white sm:text-4xl lg:text-5xl">
-                The career behind the world&rsquo;s{" "}
-                <span className="text-orange-500">energy</span>
+                {content.hero.titleLead}{" "}
+                <span className="text-orange-500">{content.hero.titleAccent}</span>
               </h1>
 
               <p className="max-w-[620px] pb-7 font-plex text-base leading-6 text-stone-300">
-                Rotational, contract and staff roles across oil &amp; gas,
-                renewables, marine and infrastructure — with visas, payroll,
-                compliance and travel handled for you, anywhere on earth.
+                {content.hero.subtitle}
               </p>
 
               {/* Search bar (feeds the roles listing below) */}
@@ -162,7 +99,7 @@ export default async function CareersPage() {
 
               {/* Stats */}
               <div className="flex flex-wrap gap-x-10 gap-y-5 pt-6">
-                {STATS.map((s) => (
+                {content.hero.stats.map((s) => (
                   <div key={s.label} className="flex flex-col gap-[3px]">
                     <div className="flex items-center font-archivo text-2xl font-extrabold text-white">
                       {s.value}
@@ -235,7 +172,7 @@ export default async function CareersPage() {
                     Open roles
                   </span>
                 </div>
-                <h2 className="font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
+                <h2 className="whitespace-pre-line font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
                   Find your next
                   <br />
                   rotation
@@ -264,23 +201,21 @@ export default async function CareersPage() {
                 <div className="flex items-center gap-3.5">
                   <span className="h-[1.5px] w-6 bg-orange-500" />
                   <span className="font-jbmono text-xs font-medium uppercase tracking-[0.24em] text-orange-500">
-                    Why build here
+                    {content.benefits.kicker}
                   </span>
                 </div>
-                <h2 className="font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
-                  More than a placement.
-                  <br />A managed career.
+                <h2 className="whitespace-pre-line font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
+                  {content.benefits.title}
                 </h2>
               </div>
               <p className="max-w-80 font-plex text-base leading-6 text-zinc-600 sm:text-right">
-                We remove the friction that comes with international energy work
-                so you can focus on the job.
+                {content.benefits.intro}
               </p>
             </div>
 
             {/* Benefit cards — hairline dividers via gap-px over gray bg */}
             <div className="grid gap-px bg-gray-200 outline outline-1 -outline-offset-1 outline-gray-200 sm:grid-cols-2 lg:grid-cols-3">
-              {BENEFITS.map((b, i) => (
+              {content.benefits.cards.map((b, i) => (
                 <div
                   key={b.title}
                   data-aos="fade-up"
@@ -316,33 +251,30 @@ export default async function CareersPage() {
                 <div className="flex items-center gap-3.5">
                   <span className="h-[1.5px] w-6 bg-orange-500" />
                   <span className="font-jbmono text-xs font-medium uppercase tracking-[0.24em] text-orange-500">
-                    How hiring works
+                    {content.hiring.kicker}
                   </span>
                 </div>
-                <h2 className="font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
-                  From apply to rig
-                  <br />
-                  in four steps
+                <h2 className="whitespace-pre-line font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
+                  {content.hiring.title}
                 </h2>
               </div>
               <p className="max-w-80 font-plex text-base leading-6 text-zinc-600 sm:text-right">
-                A clear, fast process — most candidates go from application to an
-                offer within days, not weeks.
+                {content.hiring.intro}
               </p>
             </div>
 
             {/* Steps */}
             <div className="grid gap-x-7 gap-y-10 pt-1.5 sm:grid-cols-2 lg:grid-cols-4">
-              {STEPS.map((step, i) => (
+              {content.hiring.steps.map((step, i) => (
                 <div
-                  key={step.num}
+                  key={`${step.title}-${i}`}
                   data-aos="fade-up"
                   data-aos-delay={i * 90}
                   className="flex flex-col items-start"
                 >
                   <div className="mb-6 flex size-14 items-center justify-center bg-neutral-900">
                     <span className="font-archivo text-base font-extrabold text-white">
-                      {step.num}
+                      {String(i + 1).padStart(2, "0")}
                     </span>
                   </div>
                   <div className="font-jbmono text-xs font-medium uppercase tracking-widest text-orange-500">
@@ -372,18 +304,15 @@ export default async function CareersPage() {
                 <div className="flex items-center gap-3.5">
                   <span className="h-1.5 w-1.5 rounded-sm bg-orange-500" />
                   <span className="font-jbmono text-xs font-medium uppercase tracking-[0.24em] text-orange-500">
-                    From the crew
+                    {content.testimonials.kicker}
                   </span>
                 </div>
-                <h2 className="font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
-                  What it&rsquo;s like to
-                  <br />
-                  work with us
+                <h2 className="whitespace-pre-line font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
+                  {content.testimonials.title}
                 </h2>
               </div>
               <p className="max-w-80 font-plex text-base leading-6 text-zinc-600 sm:text-right">
-                Contractors who&rsquo;ve run multiple rotations through our desk,
-                in their own words.
+                {content.testimonials.intro}
               </p>
             </div>
 
@@ -464,20 +393,17 @@ export default async function CareersPage() {
               <div className="flex items-center gap-3.5">
                 <span className="h-[1.5px] w-6 bg-orange-500" />
                 <span className="font-jbmono text-xs font-medium uppercase tracking-[0.24em] text-orange-500">
-                  Join the pipeline
+                  {content.pipeline.kicker}
                 </span>
               </div>
-              <h2 className="py-4 font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
-                Not seeing the right
-                <br />
-                role yet?
+              <h2 className="whitespace-pre-line py-4 font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
+                {content.pipeline.title}
               </h2>
               <p className="pb-6 font-hanken text-base leading-6 text-zinc-600">
-                Register your trade and tickets once. We&rsquo;ll match you to
-                live rotations across every energy region as they open.
+                {content.pipeline.body}
               </p>
               <ul className="flex flex-col gap-3">
-                {PIPELINE_POINTS.map((point) => (
+                {content.pipeline.points.map((point) => (
                   <li key={point} className="flex items-start gap-3">
                     <span className="mt-1.5 size-2 shrink-0 bg-orange-500" />
                     <span className="font-hanken text-sm leading-5 text-zinc-800">
