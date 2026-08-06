@@ -653,3 +653,280 @@ html[data-reveal-ready] [data-aos].is-in {
     transform: none;
   }
 }
+
+/* ─── Careers: job description body ──────────────────────────────────────
+   Styles the HTML authored in the CMS TipTap editor. The editor ships
+   StarterKit plus Image, Link, Underline, Sub/Superscript, Table, TaskList
+   and CodeBlockLowlight, so every tag those can emit is covered below.
+
+   Two things about TipTap's output drive this stylesheet:
+   1. List items wrap their text in a paragraph — `<li><p>text</p></li>` —
+      so `li > p` must have its block margins stripped or every bullet gains
+      a paragraph's worth of leading.
+   2. Headings often contain `<strong>`, so heading weight can't be left to
+      the inline tag.
+
+   Spacing uses ordinary flow margins with margin collapsing, NOT flex `gap`:
+   gap applies the same distance everywhere, which pushed headings far from
+   the content they label. Section breaks are loose, heading-to-body tight.
+   Scoped to .jd-body so none of this leaks into the rest of the site.     */
+
+/* Spacing and type below reproduce the values the hand-built JD used before
+   this content became CMS-driven, so the dynamic page matches the design that
+   was signed off:
+     block → block   mt-9 / gap-9  = 2.25rem
+     heading → body  mt-4          = 1rem
+     bullet → bullet gap-3         = 0.75rem
+     paragraph       text-[15px] leading-7 = 15px / 28px
+     bullet text     text-[15px] leading-6 = 15px / 24px      */
+
+.jd-body {
+  font-family: var(--ff-plex), "IBM Plex Sans", sans-serif;
+  font-size: 15px;
+  line-height: 1.75rem; /* leading-7 */
+  color: #52525b;
+}
+
+/* ── Blocks ─────────────────────────────────────────────────────────── */
+.jd-body > * + * {
+  margin-top: 1rem;
+}
+
+.jd-body :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--ff-poppins), "Poppins", sans-serif;
+  font-weight: 800;
+  color: #171717;
+  /* 1.4 rather than a tight 1.25: the half-leading it adds below the glyphs
+     is part of what separates a heading from the line under it. At 1.25 the
+     text sat almost directly on its own content. */
+  line-height: 1.4;
+}
+
+/* A clear step down at every level: h1 > h2 > h3 > h4–h6 > body.
+   h2 is pinned to 20px because it is what section headings ("About the
+   role", "Key responsibilities") are authored as, and 20px is the size the
+   static design used for them. */
+.jd-body h1 { font-size: 1.75rem; }   /* 28px */
+.jd-body h2 { font-size: 1.25rem; }   /* 20px */
+.jd-body h3 { font-size: 1.0625rem; } /* 17px */
+.jd-body :is(h4, h5, h6) { font-size: 1rem; } /* 16px */
+
+/* A heading needs breathing room on BOTH sides — loose above (it starts a new
+   section), and enough below that it reads as a label for the content rather
+   than the first line of it. */
+.jd-body > :is(h1, h2, h3, h4, h5, h6) + * {
+  margin-top: 1.25rem;
+}
+
+.jd-body > * + :is(h1, h2, h3, h4, h5, h6) {
+  margin-top: 2.5rem;
+}
+
+/* A smaller heading nested under a bigger one is a sub-section, not a new
+   section, so it sits closer than a peer-level heading would. */
+.jd-body > :is(h1, h2) + :is(h3, h4, h5, h6) {
+  margin-top: 1.75rem;
+}
+
+.jd-body > :first-child {
+  margin-top: 0;
+}
+
+/* Headings already carry their weight; don't double up on nested <strong>. */
+.jd-body :is(h1, h2, h3, h4, h5, h6) strong {
+  font-weight: inherit;
+}
+
+.jd-body p {
+  margin: 0;
+}
+
+/* ── Lists ──────────────────────────────────────────────────────────── */
+.jd-body :is(ul, ol) {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.jd-body li {
+  position: relative;
+  padding-left: 1.5rem;
+  /* leading-6 — bullet text sat tighter than body copy in the static design */
+  line-height: 1.5rem;
+}
+
+.jd-body li + li {
+  margin-top: 0.75rem;
+}
+
+/* TipTap wraps list text in a paragraph — flatten it. */
+.jd-body li > p {
+  margin: 0;
+}
+
+/* Square orange marker, matching the page's original hardcoded bullets. */
+.jd-body ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.625em;
+  width: 0.375rem;
+  height: 0.375rem;
+  background: #f97316;
+}
+
+.jd-body ol {
+  counter-reset: jd;
+}
+
+.jd-body ol > li {
+  counter-increment: jd;
+  padding-left: 1.75rem;
+}
+
+.jd-body ol > li::before {
+  content: counter(jd) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--ff-jbmono), "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.5rem;
+  color: #f97316;
+}
+
+/* Nested lists sit closer and don't restart the visual rhythm. */
+.jd-body li > :is(ul, ol) {
+  margin-top: 0.625rem;
+}
+
+/* Task lists render as a checkbox item; suppress the bullet marker. */
+.jd-body ul[data-type="taskList"] > li {
+  display: flex;
+  gap: 0.625rem;
+  padding-left: 0;
+}
+
+.jd-body ul[data-type="taskList"] > li::before {
+  content: none;
+}
+
+.jd-body ul[data-type="taskList"] input[type="checkbox"] {
+  margin-top: 0.45em;
+  accent-color: #f97316;
+  pointer-events: none;
+}
+
+/* ── Inline ─────────────────────────────────────────────────────────── */
+.jd-body strong { font-weight: 700; color: #171717; }
+.jd-body em { font-style: italic; }
+.jd-body u { text-decoration: underline; text-underline-offset: 2px; }
+.jd-body s { text-decoration: line-through; }
+.jd-body mark { background: #ffedd5; color: #171717; }
+.jd-body sub, .jd-body sup { font-size: 0.75em; line-height: 0; }
+.jd-body sup { vertical-align: super; }
+.jd-body sub { vertical-align: sub; }
+
+.jd-body a {
+  color: #ea580c;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.jd-body a:hover { color: #c2410c; }
+
+/* Inline code — not inside a <pre>, which is styled as a block below. */
+.jd-body :not(pre) > code {
+  font-family: var(--ff-jbmono), "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.875em;
+  background: #f4f4f5;
+  color: #c2410c;
+  padding: 0.15em 0.4em;
+  border: 1px solid #e4e4e7;
+}
+
+/* ── Code blocks (CodeBlockLowlight emits <pre><code class="language-…">) */
+.jd-body pre {
+  font-family: var(--ff-jbmono), "JetBrains Mono", ui-monospace, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  background: #18181b;
+  color: #e4e4e7;
+  padding: 1rem 1.15rem;
+  overflow-x: auto;
+}
+
+.jd-body pre code {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+}
+
+/* highlight.js token colours, tuned for the dark block above. */
+.jd-body pre .hljs-keyword,
+.jd-body pre .hljs-selector-tag,
+.jd-body pre .hljs-literal { color: #fb923c; }
+.jd-body pre .hljs-string,
+.jd-body pre .hljs-attr { color: #86efac; }
+.jd-body pre .hljs-comment { color: #71717a; font-style: italic; }
+.jd-body pre .hljs-number,
+.jd-body pre .hljs-built_in { color: #93c5fd; }
+.jd-body pre .hljs-title,
+.jd-body pre .hljs-function { color: #fcd34d; }
+
+/* ── Blockquote, rule, media ────────────────────────────────────────── */
+.jd-body blockquote {
+  border-left: 3px solid #f97316;
+  padding-left: 1.15rem;
+  color: #3f3f46;
+  font-style: italic;
+}
+
+.jd-body blockquote > * + * { margin-top: 0.75rem; }
+
+.jd-body hr {
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+  margin-block: 2rem;
+}
+
+.jd-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ── Tables ─────────────────────────────────────────────────────────── */
+/* Wide tables scroll inside their own box instead of widening the page. */
+.jd-body table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.jd-body :is(th, td) {
+  border: 1px solid #e5e7eb;
+  padding: 0.55rem 0.8rem;
+  text-align: left;
+  vertical-align: top;
+  min-width: 6rem;
+}
+
+.jd-body th {
+  background: #f9fafb;
+  color: #171717;
+  font-weight: 600;
+}
+
+.jd-body :is(th, td) > p { margin: 0; }
+
+.jd-body tbody tr:nth-child(even) { background: #fcfcfd; }
+
+/* TipTap's column-resize artefacts have no meaning in read-only output. */
+.jd-body .column-resize-handle,
+.jd-body .tableWrapper > .resize-cursor { display: none; }

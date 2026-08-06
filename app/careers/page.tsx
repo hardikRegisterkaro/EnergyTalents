@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { FilterProvider } from "./FilterContext";
 import HeroSearch from "./HeroSearch";
 import RolesExplorer from "./RolesExplorer";
+import { getRoles, PAGE_SIZE } from "./roles-api";
 import Link from "next/link";
 import PipelineForm from "./PipelineForm";
 
@@ -19,28 +20,8 @@ const STATS = [
   { value: "End-to-end", accent: "", label: "Visas · travel · payroll" },
 ];
 
-const FEATURED = [
-  {
-    title: "Senior DP Operator",
-    meta: "North Sea · 6/6 rotation",
-    slug: "senior-dp-operator",
-  },
-  {
-    title: "Commissioning Lead — LNG",
-    meta: "Qatar · 24-month contract",
-    slug: "commissioning-lead-lng",
-  },
-  {
-    title: "Wind Turbine Tech (GWO)",
-    meta: "Brazil · 12-month rotation",
-    slug: "wind-turbine-technician-gwo",
-  },
-  {
-    title: "HSE Manager — EPC",
-    meta: "Saudi Arabia · Staff",
-    slug: "hse-manager-epc",
-  },
-];
+/** The hero panel shows the four most recent roles flagged Featured in the CMS. */
+const FEATURED_LIMIT = 4;
 
 const BENEFITS = [
   {
@@ -129,7 +110,17 @@ const PIPELINE_POINTS = [
   "A dedicated desk that keeps your tickets current",
 ];
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  // Both reads are cached and tagged, so the CMS's revalidate call after a
+  // career edit refreshes them without a redeploy. Fetched in parallel — the
+  // featured panel and the listing are independent.
+  const [listing, featured] = await Promise.all([
+    // Only the first page — the explorer fetches subsequent pages itself, so
+    // the browser never receives the whole table at once.
+    getRoles({ page: 1, limit: PAGE_SIZE }),
+    getRoles({ featured: true, limit: FEATURED_LIMIT }),
+  ]);
+
   return (
     <FilterProvider>
       <main>
@@ -196,29 +187,35 @@ export default function CareersPage() {
                 </span>
               </div>
 
-              {FEATURED.map((job, i) => (
-                <div
-                  key={job.title}
-                  className={`flex items-center justify-between py-3.5 ${
-                    i !== FEATURED.length - 1 ? "border-b border-white/5" : ""
-                  }`}
-                >
-                  <div className="flex flex-col gap-[3px]">
-                    <div className="font-poppins text-sm font-semibold text-white">
-                      {job.title}
-                    </div>
-                    <div className="font-plex text-xs tracking-wide text-gray-500">
-                      {job.meta}
-                    </div>
-                  </div>
-                  <Link
-                    href={`/careers/${job.slug}`}
-                    className="whitespace-nowrap font-jbmono text-xs font-medium tracking-wide text-orange-500 transition-colors hover:text-orange-400"
+              {featured.roles.length === 0 ? (
+                <p className="py-5 font-plex text-xs tracking-wide text-gray-500">
+                  No featured roles right now — browse all open roles below.
+                </p>
+              ) : (
+                featured.roles.map((job, i) => (
+                  <div
+                    key={job.slug}
+                    className={`flex items-center justify-between py-3.5 ${
+                      i !== featured.roles.length - 1 ? "border-b border-white/5" : ""
+                    }`}
                   >
-                    Apply →
-                  </Link>
-                </div>
-              ))}
+                    <div className="flex flex-col gap-[3px]">
+                      <div className="font-poppins text-sm font-semibold text-white">
+                        {job.title}
+                      </div>
+                      <div className="font-plex text-xs tracking-wide text-gray-500">
+                        {job.location} · {job.duration}
+                      </div>
+                    </div>
+                    <Link
+                      href={`/careers/${job.slug}`}
+                      className="whitespace-nowrap font-jbmono text-xs font-medium tracking-wide text-orange-500 transition-colors hover:text-orange-400"
+                    >
+                      Apply →
+                    </Link>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </section>
@@ -251,7 +248,7 @@ export default function CareersPage() {
             </div>
 
             {/* Toolbar + chips + live-filtered list + load more */}
-            <RolesExplorer />
+            <RolesExplorer initial={listing} />
           </div>
         </section>
 

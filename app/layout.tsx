@@ -52,7 +52,15 @@ export default function RootLayout({
       lang="en"
       className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-white font-body text-ink">
+      {/* suppressHydrationWarning: browser extensions (password managers,
+          writing assistants) inject marker attributes onto <body> before React
+          hydrates — e.g. __processed_<uuid>__="true" — which React reports as a
+          server/client mismatch. Scoped to this element's own attributes only,
+          so children are still hydration-checked normally. */}
+      <body
+        className="min-h-full bg-white font-body text-ink"
+        suppressHydrationWarning
+      >
         <RevealInit />
         <SiteHeader />
         {children}
