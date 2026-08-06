@@ -1,22 +1,34 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ROLES, getRole, getJobDescription, slugify } from "../roles-data";
+import { getRole, getRoles, formatRate } from "../roles-api";
 import ApplyForm from "./ApplyForm";
 
 type Params = { params: Promise<{ slug: string }> };
 
-export function generateStaticParams() {
-  return ROLES.map((r) => ({ slug: slugify(r.title) }));
+/**
+ * Pre-render the roles that exist at build time. Roles published in the CMS
+ * afterwards are still served — Next renders them on first request and the
+ * `career-list` / `career-<slug>` tags keep them fresh.
+ */
+export async function generateStaticParams() {
+  const { roles } = await getRoles();
+  return roles.map((r) => ({ slug: r.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const role = getRole(slug);
+  const role = await getRole(slug);
   if (!role) return {};
+
+  const description =
+    role.metaDescription ??
+    role.summary ??
+    `Apply for ${role.title} (${role.type}, ${role.location}). ${formatRate(role.salary, role.unit)}. Mobilized and managed end to end by Energy Talents.`;
+
   return {
-    title: `${role.title} — Careers`,
-    description: `Apply for ${role.title} (${role.type}, ${role.location}). ${role.salary}${role.unit}. Mobilized and managed end to end by Energy Talents.`,
+    title: role.metaTitle ?? `${role.title} — Careers`,
+    description,
     alternates: { canonical: `/careers/${slug}` },
   };
 }
@@ -35,36 +47,10 @@ function Fact({ label, value }: { label: string; value: string }) {
   );
 }
 
-/** A titled bullet list block in the JD body. */
-function JdBlock({ title, items }: { title: string; items: string[] }) {
-  return (
-    <div>
-      <h2 className="font-poppins text-xl font-extrabold text-neutral-900">
-        {title}
-      </h2>
-      <ul className="mt-4 flex flex-col gap-3">
-        {items.map((it) => (
-          <li key={it} className="flex gap-3">
-            <span
-              aria-hidden
-              className="mt-2 size-1.5 shrink-0 bg-orange-500"
-            />
-            <span className="font-plex text-[15px] leading-6 text-zinc-600">
-              {it}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 export default async function RoleApplyPage({ params }: Params) {
   const { slug } = await params;
-  const role = getRole(slug);
+  const role = await getRole(slug);
   if (!role) notFound();
-
-  const jd = getJobDescription(role);
 
   return (
     <main className="bg-gray-50">
@@ -124,26 +110,28 @@ export default async function RoleApplyPage({ params }: Params) {
               <Fact label="Location" value={role.location} />
               <Fact label="Type" value={role.type} />
               <Fact label="Duration" value={role.duration} />
-              <Fact
-                label="Day rate"
-                value={`${role.salary}${role.unit}`}
-              />
+              <Fact label="Day rate" value={formatRate(role.salary, role.unit)} />
             </div>
 
-            {/* Body */}
-            <div className="mt-9 flex flex-col gap-9">
-              <div>
+            {/* Body — HTML authored in the CMS TipTap editor.
+                The CMS is the only writer and content is admin-authored, so the
+                markup is trusted; `jd-body` below carries the typography. */}
+            {role.description ? (
+              <div
+                className="jd-body mt-9"
+                dangerouslySetInnerHTML={{ __html: role.description }}
+              />
+            ) : (
+              <div className="mt-9">
                 <h2 className="font-poppins text-xl font-extrabold text-neutral-900">
                   About the role
                 </h2>
                 <p className="mt-4 font-plex text-[15px] leading-7 text-zinc-600">
-                  {jd.overview}
+                  {role.summary ??
+                    `We're hiring a ${role.title} for a ${role.type.toLowerCase()} assignment in ${role.location}. It's a ${role.duration} position paying ${formatRate(role.salary, role.unit)}, mobilized and managed end to end by Energy Talents — you focus on the job while we handle visas, travel, payroll and compliance.`}
                 </p>
               </div>
-              <JdBlock title="Key responsibilities" items={jd.responsibilities} />
-              <JdBlock title="What you'll need" items={jd.requirements} />
-              <JdBlock title="What we offer" items={jd.offer} />
-            </div>
+            )}
           </article>
 
           {/* Right — apply form (sticky on desktop) */}
