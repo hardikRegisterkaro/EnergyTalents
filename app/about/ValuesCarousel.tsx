@@ -1,38 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { IconShield, IconCheck, IconUsers } from "./icons";
+import * as Icons from "./icons";
+import type { AboutPageContent } from "./about-content";
 
-// Icon components can't cross the server→client boundary as props, so the
-// Values data lives here in the client component that renders it.
-const VALUES = [
-  {
-    n: "01",
-    Icon: IconShield,
-    title: "Safety before schedule",
-    body: "A crew that comes home safe is the only KPI that can't be traded. We'll decline a placement that doesn't meet our HSE bar.",
-    proofLead: "HSE-first",
-    proof: "safety comes before the schedule, on every placement",
-  },
-  {
-    n: "02",
-    Icon: IconCheck,
-    title: "Compliance without shortcuts",
-    body: "Every certification verified at source, every visa genuine, every contract MLC-clean. Slow paperwork done fast — never skipped.",
-    proofLead: "Verified",
-    proof: "certifications checked at source and visas confirmed genuine",
-  },
-  {
-    n: "03",
-    Icon: IconUsers,
-    title: "People before placements",
-    body: "Contractors get paid on time, in their currency, every rotation. The relationship is meant to outlast the placement.",
-    proofLead: "On time",
-    proof: "paid correctly, in your currency, every single rotation",
-  },
-];
+type ValueCard = AboutPageContent["values"]["cards"][number];
 
-export default function ValuesCarousel() {
+/**
+ * Icon components can't cross the server→client boundary as props, so the CMS
+ * stores an icon NAME and it is resolved to a component here.
+ */
+function resolveIcon(name: string) {
+  const map = Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>;
+  return map[name] ?? Icons.IconShield;
+}
+
+
+export default function ValuesCarousel({ cards }: { cards: ValueCard[] }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
 
@@ -78,17 +62,20 @@ export default function ValuesCarousel() {
         ref={scrollerRef}
         className="no-scrollbar -mx-6 -mb-4 mt-8 flex snap-x snap-mandatory items-stretch gap-6 overflow-x-auto scroll-px-6 px-6 py-4 md:mx-0 md:mb-0 md:mt-12 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:py-0"
       >
-        {VALUES.map((v, i) => (
+        {cards.map((v, i) => (
           <div
-            key={v.n}
+            key={`${v.title}-${i}`}
             className="vcard reveal w-[70%] shrink-0 snap-start p-8 md:w-auto"
             style={{ ["--reveal-delay" as string]: `${i * 90}ms` }}
           >
             <div className="vnum" aria-hidden>
-              {v.n}
+              {String(i + 1).padStart(2, "0")}
             </div>
             <span className="grad chip-glow grid h-11 w-11 place-items-center rounded-xl text-white">
-              <v.Icon className="h-5 w-5" />
+              {(() => {
+                const Icon = resolveIcon(v.icon);
+                return <Icon className="h-5 w-5" />;
+              })()}
             </span>
             <h3 className="mt-5 font-display text-[19px] font-bold text-ink">
               {v.title}
@@ -108,12 +95,12 @@ export default function ValuesCarousel() {
 
       {/* Pagination dots — mobile / small-tablet only */}
       <div className="mt-6 flex justify-center gap-2 md:hidden">
-        {VALUES.map((v, i) => (
+        {cards.map((_, i) => (
           <button
-            key={v.n}
+            key={`dot-${i}`}
             type="button"
             onClick={() => goTo(i)}
-            aria-label={`Go to value ${v.n}`}
+            aria-label={`Go to value ${i + 1}`}
             aria-current={i === active}
             className={`h-2 rounded-full transition-all ${
               i === active ? "grad w-6" : "w-2 bg-linec"

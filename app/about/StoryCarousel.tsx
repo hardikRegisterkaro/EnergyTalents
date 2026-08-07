@@ -1,23 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-
-// Deployment regions our India-based desk places crews into.
-const HUBS = [
-  { tag: "Region", city: "Middle East & Africa", desk: "Upstream, downstream & EPC" },
-  { tag: "Region", city: "Europe & North Sea", desk: "Offshore & marine" },
-  { tag: "Region", city: "Asia-Pacific", desk: "Oil, gas & renewables" },
-  { tag: "Region", city: "The Americas", desk: "Onshore & offshore" },
-];
-
-const TIMELINE = [
-  { year: "01", title: "Source", body: "Vetted technical talent matched to your discipline and scope." },
-  { year: "02", title: "Screen", body: "Certifications, medicals and competency checked before travel." },
-  { year: "03", title: "Mobilize", body: "Visas, flights and onboarding arranged end to end." },
-  { year: "04", title: "Support", body: "A duty desk on call through the whole rotation." },
-];
-
-const SLIDES = 2;
+import type { StorySlide } from "./about-content";
 
 /** Fake browser-window chrome shared by both slides. */
 function WindowBar({ badge }: { badge: string }) {
@@ -36,12 +20,15 @@ function WindowBar({ badge }: { badge: string }) {
   );
 }
 
-export default function StoryCarousel() {
+export default function StoryCarousel({ slides }: { slides: StorySlide[] }) {
+  // Slide count is whatever the CMS supplies — wrap-around, dots, keyboard
+  // arrows and auto-advance all derive from it.
+  const count = slides.length;
   const [index, setIndex] = useState(0);
 
   const go = useCallback((next: number) => {
-    setIndex(((next % SLIDES) + SLIDES) % SLIDES);
-  }, []);
+    setIndex(count > 0 ? ((next % count) + count) % count : 0);
+  }, [count]);
 
   // Keyboard arrows when the carousel region is focused
   const onKey = (e: React.KeyboardEvent) => {
@@ -93,130 +80,93 @@ export default function StoryCarousel() {
           className="flex transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)]"
           style={{ transform: `translateX(-${index * 100}%)` }}
         >
-          {/* Slide 1 — Mission + milestones */}
-          <div
-            className="grad-deep dotbg-dark relative w-full shrink-0 overflow-hidden"
-            aria-hidden={index !== 0}
-          >
-            <div className="grid min-h-[480px] gap-8 p-8 lg:grid-cols-[0.42fr_0.58fr] lg:p-10">
-              <div className="flex flex-col justify-center">
-                <span className="self-start rounded-full bg-white/20 px-3.5 py-1.5 text-[12.5px] font-semibold text-white">
-                  Our Mission
-                </span>
-                <h2 className="mt-5 font-display text-[clamp(1.8rem,3vw,2.6rem)] font-bold leading-[1.08] text-white">
-                  No project delayed
-                  <br />
-                  for lack of crew
-                </h2>
-                <p className="mt-4 max-w-[300px] text-[15px] leading-relaxed text-white/85">
-                  Everything we do exists to make one thing faster: getting the
-                  right person to the right site, compliant and ready.
-                </p>
-                <div className="mt-7 flex gap-3">
-                  <a
-                    href="#values"
-                    className="btn-lift rounded-lg bg-white px-5 py-3 text-[14px] font-bold text-brand"
-                  >
-                    Our Values
-                  </a>
-                  <a
-                    href="#offices"
-                    className="btn-lift rounded-lg border border-white/50 px-5 py-3 text-[14px] font-semibold text-white hover:bg-white/10"
-                  >
-                    Where We Work
-                  </a>
+          {slides.map((slide, si) => (
+            <div
+              key={`${slide.badge}-${si}`}
+              className="grad-deep dotbg-dark relative w-full shrink-0 overflow-hidden"
+              aria-hidden={index !== si}
+            >
+              <div className="grid min-h-[480px] gap-8 p-8 lg:grid-cols-[0.42fr_0.58fr] lg:p-10">
+                <div className="flex flex-col justify-center">
+                  <span className="self-start rounded-full bg-white/20 px-3.5 py-1.5 text-[12.5px] font-semibold text-white">
+                    {slide.badge}
+                  </span>
+                  <h2 className="mt-5 whitespace-pre-line font-display text-[clamp(1.8rem,3vw,2.6rem)] font-bold leading-[1.08] text-white">
+                    {slide.title}
+                  </h2>
+                  <p className="mt-4 max-w-[300px] text-[15px] leading-relaxed text-white/85">
+                    {slide.body}
+                  </p>
+                  {slide.links.length > 0 && (
+                    <div className="mt-7 flex gap-3">
+                      {slide.links.map((l, li) => (
+                        <a
+                          key={`${l.href}-${li}`}
+                          href={l.href}
+                          className={
+                            li === 0
+                              ? "btn-lift rounded-lg bg-white px-5 py-3 text-[14px] font-bold text-brand"
+                              : "btn-lift rounded-lg border border-white/50 px-5 py-3 text-[14px] font-semibold text-white hover:bg-white/10"
+                          }
+                        >
+                          {l.text}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
-              <div className="relative">
-                <div className="overflow-hidden rounded-xl bg-white shadow-2xl lg:absolute lg:inset-x-0 lg:-bottom-2 lg:top-2">
-                  <WindowBar badge="How we work" />
-                  <div className="grid gap-2.5 p-4">
-                    {TIMELINE.map((t) => (
-                      <div
-                        key={t.year}
-                        className="flex items-center gap-4 rounded-xl border border-linec p-3"
-                      >
-                        <span className="w-10 shrink-0 text-[12px] font-bold text-brand">
-                          {t.year}
-                        </span>
-                        <div>
-                          <div className="text-[14.5px] font-bold text-ink">
-                            {t.title}
-                          </div>
-                          <div className="mt-0.5 text-[12.5px] text-body2">
-                            {t.body}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Slide 2 — Global presence */}
-          <div
-            className="grad-deep dotbg-dark relative w-full shrink-0 overflow-hidden"
-            aria-hidden={index !== 1}
-          >
-            <div className="grid min-h-[480px] gap-8 p-8 lg:grid-cols-[0.42fr_0.58fr] lg:p-10">
-              <div className="flex flex-col justify-center">
-                <span className="self-start rounded-full bg-white/20 px-3.5 py-1.5 text-[12.5px] font-semibold text-white">
-                  Global Deployment
-                </span>
-                <h2 className="mt-5 font-display text-[clamp(1.8rem,3vw,2.6rem)] font-bold leading-[1.08] text-white">
-                  Crews placed
-                  <br />
-                  worldwide
-                </h2>
-                <p className="mt-4 max-w-[300px] text-[15px] leading-relaxed text-white/85">
-                  We recruit and mobilize from India, placing crews across the
-                  world&apos;s energy regions — screened, compliant and ready.
-                </p>
-                <div className="mt-7 flex gap-3">
-                  <a
-                    href="#offices"
-                    className="btn-lift rounded-lg bg-white px-5 py-3 text-[14px] font-bold text-brand"
-                  >
-                    Where We Work
-                  </a>
-                </div>
-              </div>
-              <div className="relative">
-                <div className="overflow-hidden rounded-xl bg-white shadow-2xl lg:absolute lg:inset-x-0 lg:-bottom-2 lg:top-6">
-                  <WindowBar badge="24/7 coverage" />
-                  <div className="grid gap-3.5 p-5 sm:grid-cols-2">
-                    {HUBS.map((h) => (
-                      <div
-                        key={h.city}
-                        className="rounded-xl border border-linec p-4"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="text-[11.5px] font-semibold text-stone-500">
-                            {h.tag}
-                          </span>
-                          <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                        </div>
-                        <div className="mt-1.5 text-[15px] font-bold text-ink">
-                          {h.city}
-                        </div>
-                        <div className="mt-0.5 text-[12.5px] text-body2">
-                          {h.desk}
-                        </div>
+                <div className="relative">
+                  <div className="overflow-hidden rounded-xl bg-white shadow-2xl lg:absolute lg:inset-x-0 lg:-bottom-2 lg:top-2">
+                    <WindowBar badge={slide.windowBadge} />
+
+                    {slide.panel === "steps" ? (
+                      <div className="grid gap-2.5 p-4">
+                        {slide.steps.map((t, i) => (
+                          <div
+                            key={`${t.title}-${i}`}
+                            className="flex items-center gap-4 rounded-xl border border-linec p-3"
+                          >
+                            <span className="w-10 shrink-0 text-[12px] font-bold text-brand">
+                              {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <div>
+                              <div className="text-[14.5px] font-bold text-ink">{t.title}</div>
+                              <div className="mt-0.5 text-[12.5px] text-body2">{t.body}</div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    ) : (
+                      <div className="grid gap-3.5 p-5 sm:grid-cols-2">
+                        {slide.regions.map((h, i) => (
+                          <div
+                            key={`${h.city}-${i}`}
+                            className="rounded-xl border border-linec p-4"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11.5px] font-semibold text-stone-500">
+                                {h.tag}
+                              </span>
+                              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                            </div>
+                            <div className="mt-2 text-[15px] font-bold text-ink">{h.city}</div>
+                            <div className="mt-0.5 text-[12.5px] text-body2">{h.desk}</div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          ))}
         </div>
       </div>
 
       {/* Dots */}
       <div className="mt-5 flex justify-center gap-2">
-        {Array.from({ length: SLIDES }).map((_, i) => (
+        {slides.map((_, i) => (
           <button
             key={i}
             type="button"
