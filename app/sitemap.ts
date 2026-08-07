@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getRoles } from "./careers/roles-api";
 import { getPostSlugs } from "./blog/posts-api";
+import { getServiceSlugs } from "./services/service-api";
 
 // Keep in sync with metadataBase in app/layout.tsx.
 const BASE = "https://energytalentz.com";
@@ -25,11 +26,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const core: MetadataRoute.Sitemap = [
     { url: `${BASE}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${BASE}/about`, changeFrequency: "monthly", priority: 0.8 },
-    {
-      url: `${BASE}/services/contract-manpower-supply`,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
     { url: `${BASE}/careers`, changeFrequency: "daily", priority: 0.9 },
     { url: `${BASE}/resume-builder`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/blog`, changeFrequency: "weekly", priority: 0.7 },
@@ -39,15 +35,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // A large limit rather than paging: the CMS caps it, and one request keeps
   // sitemap generation cheap at build time.
-  const [rolesResponse, postSlugs] = await Promise.all([
+  const [rolesResponse, postSlugs, serviceSlugs] = await Promise.all([
     getRoles({ limit: 200 }),
     getPostSlugs(),
+    getServiceSlugs(),
   ]);
 
   const roles: MetadataRoute.Sitemap = rolesResponse.roles.map((r) => ({
     url: `${BASE}/careers/${r.slug}`,
     changeFrequency: "weekly",
     priority: 0.6,
+  }));
+
+  const services: MetadataRoute.Sitemap = serviceSlugs.map((s) => ({
+    url: `${BASE}/services/${s.slug}`,
+    lastModified: s.updatedAt ? new Date(s.updatedAt) : now,
+    changeFrequency: "monthly",
+    priority: 0.8,
   }));
 
   const articles: MetadataRoute.Sitemap = postSlugs.map((p) => ({
@@ -58,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...core, ...roles, ...articles].map((entry) => ({
+  return [...core, ...services, ...roles, ...articles].map((entry) => ({
     lastModified: now,
     ...entry,
   }));
