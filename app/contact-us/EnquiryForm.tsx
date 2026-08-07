@@ -9,20 +9,22 @@ import { isValidEmail, isValidPhone, submitLead } from "../lib/leads";
  * validates inline before posting to the CMS as a lead. Client-side island.
  */
 
-type Region = {
-  value: string;
-  label: string;
+export type EnquiryCopy = {
+  kicker: string;
+  heading: string;
+  intro: string;
+  routingLabel: string;
+  deskName: string;
+  deskLocation: string;
+  regions: string[];
+  consentText: string;
+  submitLabel: string;
+  replyNote: string;
+  successHeading: string;
+  successText: string;
+  successButton: string;
 };
 
-// Where the project is — every enquiry reaches our one mobilization desk.
-const REGIONS: Region[] = [
-  { value: "mea", label: "Middle East & Africa" },
-  { value: "euro", label: "Europe & North Sea" },
-  { value: "apac", label: "Asia-Pacific" },
-  { value: "amer", label: "The Americas" },
-  { value: "india", label: "India / domestic" },
-  { value: "global", label: "Multiple / global" },
-];
 
 const inputBase =
   "w-full rounded-xl border border-linec bg-white px-4 py-3 font-body text-sm text-ink outline-none transition-colors placeholder:text-body2/50 focus:border-brand";
@@ -55,7 +57,7 @@ function IconPhone() {
   );
 }
 
-export default function EnquiryForm() {
+export default function EnquiryForm({ copy }: { copy: EnquiryCopy }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -67,7 +69,9 @@ export default function EnquiryForm() {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const desk = REGIONS.find((r) => r.value === region) ?? null;
+  // The stored value is the label itself, so a region can be renamed in the
+  // CMS without orphaning enquiries that used the old wording.
+  const desk = copy.regions.includes(region) ? region : null;
   // Same rules the CMS applies, so a field that passes here is never bounced.
   const emailOk = isValidEmail(email);
   const phoneOk = isValidPhone(phone);
@@ -90,7 +94,7 @@ export default function EnquiryForm() {
       phoneNo: phone,
       leadSource: "Contact — Send an Enquiry",
       formData: {
-        "Project region": desk?.label ?? region,
+        "Project region": region,
         "How can we help?": message,
         Consent: "Agreed to storage & processing",
       },
@@ -118,20 +122,19 @@ export default function EnquiryForm() {
       {/* Left — pitch + routing */}
       <div data-aos="fade-up">
         <p className="font-body text-xs font-bold uppercase tracking-[0.2em] text-brand">
-          Send an enquiry
+          {copy.kicker}
         </p>
         <h2 className="mt-4 max-w-md font-display text-[28px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[40px]">
-          One form. Straight to our desk.
+          {copy.heading}
         </h2>
         <p className="mt-4 max-w-md font-body text-base leading-relaxed text-body2">
-          Tell us the project region and scope, and our mobilization desk takes
-          it from there — sourcing, vetting and travel handled end to end.
+          {copy.intro}
         </p>
 
         {/* Routing card */}
         <div className="mt-8 max-w-md rounded-2xl border border-linec bg-white p-6 softshadow">
           <p className="font-body text-[11px] font-bold uppercase tracking-[0.16em] text-body2/60">
-            This enquiry routes to
+            {copy.routingLabel}
           </p>
           <div className="mt-4 flex items-center gap-3.5">
             <span className="grid size-11 shrink-0 place-items-center rounded-full font-display text-sm font-bold text-white grad">
@@ -139,12 +142,12 @@ export default function EnquiryForm() {
             </span>
             <div>
               <div className="font-display text-base font-bold text-ink">
-                Our mobilization desk
+                {copy.deskName}
               </div>
               <div className="mt-0.5 font-body text-[13px] leading-snug text-body2">
                 {desk
-                  ? `We'll match crew for your ${desk.label} project.`
-                  : "Tirunelveli, Tamil Nadu, India"}
+                  ? `We'll match crew for your ${desk} project.`
+                  : copy.deskLocation}
               </div>
             </div>
           </div>
@@ -201,19 +204,17 @@ export default function EnquiryForm() {
               ✓
             </span>
             <h3 className="mt-5 font-display text-2xl font-bold text-ink">
-              Enquiry received
+              {copy.successHeading}
             </h3>
             <p className="mt-2 font-body text-sm leading-6 text-body2">
-              Your request is with our{" "}
-              <span className="font-semibold text-ink">mobilization desk</span>.
-              We&rsquo;ll reply within four working hours.
+              {copy.successText}
             </p>
             <button
               type="button"
               onClick={reset}
               className="mt-6 rounded-lg border border-ink/20 px-5 py-2.5 font-body text-sm font-semibold text-ink transition-colors hover:border-ink/40"
             >
-              Send another enquiry
+              {copy.successButton}
             </button>
           </div>
         ) : (
@@ -302,9 +303,9 @@ export default function EnquiryForm() {
                 }}
               >
                 <option value="">Select a region...</option>
-                {REGIONS.map((r) => (
-                  <option key={r.value} value={r.value}>
-                    {r.label}
+                {copy.regions.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
                   </option>
                 ))}
               </select>
@@ -341,8 +342,7 @@ export default function EnquiryForm() {
                 className="mt-0.5 size-4 shrink-0 accent-brand"
               />
               <span className="font-body text-[13px] leading-snug text-body2">
-                I agree that Energy Talents may store and process these details
-                to respond to my enquiry.
+                {copy.consentText}
               </span>
             </label>
             {tried && !agree && (
@@ -366,13 +366,10 @@ export default function EnquiryForm() {
                 disabled={pending}
                 className="btn-grad btn-lift inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-body text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {pending ? "Sending…" : "Send Enquiry →"}
+                {pending ? "Sending…" : copy.submitLabel}
               </button>
               <span className="font-body text-[13px] text-body2">
-                Typical reply:{" "}
-                <span className="font-semibold text-ink">
-                  under 4 working hours
-                </span>
+                {copy.replyNote}
               </span>
             </div>
           </form>

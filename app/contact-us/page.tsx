@@ -2,15 +2,32 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import EnquiryForm from "./EnquiryForm";
 import ContactFaq from "./ContactFaq";
+import { getContactPage, telHref } from "./contact-api";
 
-export const metadata: Metadata = {
-  title: "Contact Us",
-  description:
-    "Tell us what the project needs and we'll crew it. Every enquiry reaches a named coordinator in the nearest hub — crew requests answered within four working hours, urgent rotation issues in fifteen minutes.",
-  alternates: { canonical: "/contact-us" },
-};
+/**
+ * Contact Us — rendered from the CMS.
+ *
+ * Every string on this page is editor-managed; the layout and the form fields
+ * are not. getContactPage() falls back to the shipped copy, so an unreachable
+ * or unconfigured CMS still renders a complete page with a working form —
+ * this is the site's main conversion route, so a blank render is not an
+ * acceptable failure mode.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getContactPage();
+  return {
+    title: page.metaTitle || "Contact Us",
+    description:
+      page.metaDescription ||
+      "Tell us what the project needs and we'll crew it. Every enquiry reaches a named coordinator in the nearest hub — crew requests answered within four working hours, urgent rotation issues in fifteen minutes.",
+    alternates: { canonical: "/contact-us" },
+  };
+}
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const { content } = await getContactPage();
+  const { hero, enquiry, emergency, faq, cta } = content;
+
   return (
     <main>
       {/* Hero -------------------------------------------------------- */}
@@ -22,10 +39,10 @@ export default function ContactPage() {
           >
             <span className="size-2 rounded-full bg-green-500" />
             <span className="font-body text-xs font-semibold text-ink">
-              Enquiry desk open now
+              {hero.badge}
             </span>
             <span className="font-body text-xs text-body2/70">
-              · Tirunelveli, Tamil Nadu, India
+              {hero.badgeSuffix}
             </span>
           </div>
 
@@ -33,17 +50,15 @@ export default function ContactPage() {
             data-aos="fade-up"
             className="mt-7 font-display text-[32px] font-bold leading-[1.08] tracking-tight text-ink sm:text-[44px] lg:text-[52px]"
           >
-            Tell us what the project needs —{" "}
-            <span className="o-text">we&rsquo;ll crew it</span>
+            {hero.titleLead}{" "}
+            <span className="o-text">{hero.titleAccent}</span>
           </h1>
 
           <p
             data-aos="fade-up"
             className="mt-5 max-w-xl font-body text-base leading-relaxed text-body2 sm:text-[17px]"
           >
-            Every enquiry reaches a named coordinator in the nearest hub, not a
-            shared inbox. Crew requests are answered within four working hours;
-            urgent rotation issues, in fifteen minutes.
+            {hero.subtitle}
           </p>
 
           <div
@@ -54,13 +69,13 @@ export default function ContactPage() {
               href="#enquiry"
               className="btn-grad btn-lift inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-body text-sm font-bold text-white"
             >
-              Request Technical Crew →
+              {hero.ctaPrimary}
             </a>
             <a
               href="#enquiry"
               className="btn-lift inline-flex items-center rounded-xl border border-ink/20 px-6 py-3.5 font-body text-sm font-semibold text-ink hover:border-ink/40"
             >
-              Find Your Hub
+              {hero.ctaSecondary}
             </a>
           </div>
         </div>
@@ -72,7 +87,7 @@ export default function ContactPage() {
         className="dotbg scroll-mt-16 border-t border-linec bg-cream px-4 py-16 sm:px-6 md:py-24"
       >
         <div className="mx-auto max-w-[1200px]">
-          <EnquiryForm />
+          <EnquiryForm copy={enquiry} />
         </div>
       </section>
 
@@ -83,33 +98,28 @@ export default function ContactPage() {
           <div data-aos="fade-up" className="max-w-lg">
             <span className="inline-flex items-center gap-2 rounded-full bg-black/15 px-3.5 py-1.5 font-body text-xs font-semibold text-white">
               <span className="size-1.5 rounded-full bg-green-400" />
-              24/7 Duty Desk
+              {emergency.badge}
             </span>
             <h2 className="mt-5 font-display text-[28px] font-bold leading-[1.1] tracking-tight text-white sm:text-[40px]">
-              Crew down at 3am?
-              <br />
-              Call, don&rsquo;t email.
+              {emergency.heading}
             </h2>
             <p className="mt-4 font-body text-base leading-relaxed text-white/85">
-              Flight disruptions, medical evacuations, visa bottlenecks and
-              weather stand-downs go straight to a named duty manager in the
-              nearest hub — acknowledged within fifteen minutes, any hour of any
-              day.
+              {emergency.body}
             </p>
           </div>
 
           <div className="flex w-full max-w-md flex-col gap-4">
             <a
-              href="tel:+919176674449"
+              href={telHref(emergency.phoneNumber)}
               data-aos="fade-up"
               className="flex items-center justify-between gap-4 rounded-2xl bg-white p-6 softshadow"
             >
               <div>
                 <div className="font-body text-[11px] font-bold uppercase tracking-[0.14em] text-body2/70">
-                  24/7 emergency line
+                  {emergency.phoneLabel}
                 </div>
                 <div className="mt-1 font-display text-xl font-bold text-brand">
-                  +91 91766 74449
+                  {emergency.phoneNumber}
                 </div>
               </div>
               <span className="grid size-11 shrink-0 place-items-center rounded-xl text-white grad">
@@ -124,17 +134,17 @@ export default function ContactPage() {
               </span>
             </a>
             <a
-              href="mailto:immanuel@energytalentz.com"
+              href={`mailto:${emergency.emailAddress}`}
               data-aos="fade-up"
               data-aos-delay="100"
               className="group flex items-center justify-between gap-4 rounded-2xl border border-white/30 p-6 transition-colors hover:bg-white/10"
             >
               <div>
                 <div className="font-body text-[11px] font-bold uppercase tracking-[0.14em] text-white/70">
-                  Email us
+                  {emergency.emailLabel}
                 </div>
                 <div className="mt-1 font-display text-lg font-bold text-white">
-                  immanuel@energytalentz.com
+                  {emergency.emailAddress}
                 </div>
               </div>
               <span className="text-xl text-white transition-transform group-hover:translate-x-0.5">
@@ -150,17 +160,16 @@ export default function ContactPage() {
         <div className="mx-auto grid max-w-[1200px] gap-10 lg:grid-cols-[minmax(0,384px)_1fr] lg:gap-16">
           <div data-aos="fade-up">
             <p className="font-body text-xs font-bold uppercase tracking-[0.2em] text-brand">
-              Before you write
+              {faq.kicker}
             </p>
             <h2 className="mt-4 font-display text-[28px] font-bold leading-[1.1] tracking-tight text-ink sm:text-[40px]">
-              Questions we get most often
+              {faq.heading}
             </h2>
             <p className="mt-4 max-w-sm font-body text-base leading-relaxed text-body2">
-              Still unsure which desk you need? Send the enquiry anyway — we&rsquo;ll
-              route it internally.
+              {faq.intro}
             </p>
           </div>
-          <ContactFaq />
+          <ContactFaq faqs={faq.items} />
         </div>
       </section>
 
@@ -172,12 +181,10 @@ export default function ContactPage() {
             <div className="relative flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
               <div data-aos="fade-up">
                 <h2 className="font-display text-[26px] font-bold leading-tight tracking-tight text-white sm:text-[34px]">
-                  Not sure where to start?
+                  {cta.heading}
                 </h2>
                 <p className="mt-3 max-w-md font-body text-base leading-relaxed text-white/85">
-                  Send the enquiry and we&rsquo;ll route it. Or read how we
-                  mobilize, vet and pay technical crews for energy projects
-                  worldwide.
+                  {cta.body}
                 </p>
               </div>
               <div
@@ -189,13 +196,13 @@ export default function ContactPage() {
                   href="#enquiry"
                   className="btn-lift inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3.5 font-body text-sm font-bold text-ink hover:bg-cream-2"
                 >
-                  Send an Enquiry →
+                  {cta.primaryLabel}
                 </a>
                 <Link
                   href="/about"
                   className="btn-lift inline-flex items-center rounded-xl border border-white/40 px-6 py-3.5 font-body text-sm font-semibold text-white hover:bg-white/10"
                 >
-                  About Energy Talents
+                  {cta.secondaryLabel}
                 </Link>
               </div>
             </div>
