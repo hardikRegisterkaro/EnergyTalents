@@ -7,11 +7,11 @@
  * here so the components stay presentational.
  *
  * Caching note (Next 16, `cacheComponents` is NOT enabled on this project):
- * `fetch` is uncached by default, so every cached read below opts in with
- * `cache: "force-cache"` and a tag. The CMS calls POST /api/revalidate with
- * ["post-list", `post-<slug>`] after any post mutation — those exact strings
- * are defined in energy-talent-cms/app/api/post/create-update-delete-post,
- * so they must not be renamed on one side only.
+ * `fetch` is uncached by default, so reads opt in via `cacheFor()` below. The
+ * CMS calls POST /api/revalidate with ["post-list", `post-<slug>`] after any
+ * post mutation — those exact strings are defined in
+ * energy-talent-cms/app/api/post/create-update-delete-post, so they must not
+ * be renamed on one side only.
  */
 
 export const CMS_URL = (
@@ -21,6 +21,22 @@ export const CMS_URL = (
 /** Cache tags, kept in one place so they cannot drift from the CMS. */
 export const POST_LIST_TAG = "post-list";
 export const postTag = (slug: string) => `post-${slug}`;
+
+/**
+ * Cache policy for a CMS read.
+ *
+ * Production caches on the tag and lets the CMS invalidate it on publish.
+ * Development reads live instead, because the CMS sends its revalidation ping
+ * to PRODUCTION_URL — normally the deployed frontend, not the dev server — so
+ * a local blog would otherwise serve whatever it cached on first load, forever.
+ * Restarting does not help either: Next persists the fetch cache under
+ * .next/cache, so the stale entry survives until that directory is cleared.
+ */
+function cacheFor(tags: string[]): RequestInit & { next?: { tags: string[] } } {
+  return process.env.NODE_ENV === "development"
+    ? { cache: "no-store" }
+    : { cache: "force-cache", next: { tags } };
+}
 
 export type PostCategory = {
   id: string;
@@ -171,10 +187,7 @@ function normalizeList(json: unknown): PostsResponse {
  */
 export async function getPosts(params: PostsParams = {}): Promise<PostsResponse> {
   try {
-    const res = await fetch(listUrl(params), {
-      cache: "force-cache",
-      next: { tags: [POST_LIST_TAG] },
-    });
+    const res = await fetch(listUrl(params), cacheFor([POST_LIST_TAG]));
     if (!res.ok) return EMPTY;
     return normalizeList(await res.json());
   } catch {
@@ -198,7 +211,7 @@ export async function getPost(slug: string): Promise<BlogPostDetail | null> {
   try {
     const res = await fetch(
       `${CMS_URL}/api/post/client/detail-blog?slug=${encodeURIComponent(slug)}`,
-      { cache: "force-cache", next: { tags: [postTag(slug)] } }
+      cacheFor([postTag(slug)])
     );
     if (!res.ok) return null;
     const json = (await res.json()) as { success?: boolean; post?: BlogPostDetail };
@@ -216,10 +229,7 @@ export async function getPost(slug: string): Promise<BlogPostDetail | null> {
  */
 export async function getCategories(): Promise<PostCategory[]> {
   try {
-    const res = await fetch(`${CMS_URL}/api/post/client/filter`, {
-      cache: "force-cache",
-      next: { tags: [POST_LIST_TAG] },
-    });
+    const res = await fetch(`${CMS_URL}/api/post/client/filter`, cacheFor([POST_LIST_TAG]));
     if (!res.ok) return [];
     const json = (await res.json()) as { success?: boolean; categories?: PostCategory[] };
     return json?.success && Array.isArray(json.categories) ? json.categories : [];
@@ -233,10 +243,7 @@ export async function getPostSlugs(): Promise<
   Array<{ slug: string; updatedAt?: string; publishedAt?: string }>
 > {
   try {
-    const res = await fetch(`${CMS_URL}/api/post/client/sitemap`, {
-      cache: "force-cache",
-      next: { tags: [POST_LIST_TAG] },
-    });
+    const res = await fetch(`${CMS_URL}/api/post/client/sitemap`, cacheFor([POST_LIST_TAG]));
     if (!res.ok) return [];
     const json = (await res.json()) as {
       success?: boolean;
