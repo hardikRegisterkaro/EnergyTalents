@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { isValidEmail, isValidPhone, submitLead } from "../lib/leads";
 
 /**
  * "Send an enquiry" — the two-column form section. Choosing a project region
  * dynamically names the desk/coordinator the enquiry routes to, and the form
- * validates + confirms inline (no backend). Client-side island.
+ * validates inline before posting to the CMS as a lead. Client-side island.
  */
 
 type Region = {
@@ -41,34 +42,75 @@ function IconMail() {
     </svg>
   );
 }
+function IconPhone() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="size-4 text-body2/60" aria-hidden>
+      <path
+        d="M6.5 3.5h3l1.5 4-2 1.5a12 12 0 006 6l1.5-2 4 1.5v3a2 2 0 01-2.2 2A17 17 0 014.5 5.7 2 2 0 016.5 3.5z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export default function EnquiryForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [region, setRegion] = useState("");
   const [message, setMessage] = useState("");
   const [agree, setAgree] = useState(false);
   const [tried, setTried] = useState(false);
   const [sent, setSent] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const desk = REGIONS.find((r) => r.value === region) ?? null;
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  // Same rules the CMS applies, so a field that passes here is never bounced.
+  const emailOk = isValidEmail(email);
+  const phoneOk = isValidPhone(phone);
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (pending) return;
+
     setTried(true);
-    if (!name.trim() || !emailOk || !region || !message.trim() || !agree) return;
-    setSent(true);
+    if (!name.trim() || !emailOk || !phoneOk || !region || !message.trim() || !agree) {
+      return;
+    }
+
+    setPending(true);
+    setError(null);
+
+    const result = await submitLead({
+      name,
+      email,
+      phoneNo: phone,
+      leadSource: "Contact — Send an Enquiry",
+      formData: {
+        "Project region": desk?.label ?? region,
+        "How can we help?": message,
+        Consent: "Agreed to storage & processing",
+      },
+    });
+
+    setPending(false);
+    if (result.ok) setSent(true);
+    else setError(result.message);
   };
 
   const reset = () => {
     setSent(false);
     setName("");
     setEmail("");
+    setPhone("");
     setRegion("");
     setMessage("");
     setAgree(false);
     setTried(false);
+    setError(null);
   };
 
   return (
@@ -225,6 +267,29 @@ export default function EnquiryForm() {
 
             <label className="block">
               <span className="font-body text-sm font-semibold text-ink">
+                Phone number
+              </span>
+              <span className="relative mt-2 flex items-center">
+                <span className="pointer-events-none absolute left-3.5">
+                  <IconPhone />
+                </span>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+44 7700 900123"
+                  className={`${inputBase} pl-10`}
+                />
+              </span>
+              {tried && !phoneOk && (
+                <span className="mt-1 block font-body text-xs text-red-500">
+                  Enter a valid phone number (7–15 digits).
+                </span>
+              )}
+            </label>
+
+            <label className="block">
+              <span className="font-body text-sm font-semibold text-ink">
                 Project region
               </span>
               <select
@@ -286,12 +351,22 @@ export default function EnquiryForm() {
               </span>
             )}
 
+            {error && (
+              <p
+                role="alert"
+                className="rounded-xl border-l-2 border-red-500 bg-red-50 px-4 py-3 font-body text-sm text-red-700"
+              >
+                {error}
+              </p>
+            )}
+
             <div className="flex flex-wrap items-center gap-4">
               <button
                 type="submit"
-                className="btn-grad btn-lift inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-body text-sm font-bold text-white"
+                disabled={pending}
+                className="btn-grad btn-lift inline-flex items-center gap-2 rounded-xl px-6 py-3.5 font-body text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Send Enquiry →
+                {pending ? "Sending…" : "Send Enquiry →"}
               </button>
               <span className="font-body text-[13px] text-body2">
                 Typical reply:{" "}

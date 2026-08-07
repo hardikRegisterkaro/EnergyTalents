@@ -9,12 +9,14 @@ import {
   useState,
 } from "react";
 import type { ResumeIntent } from "./resume-intents";
+import { submitLead, uploadCv, validateCv } from "../lib/leads";
 
 /**
  * A single resume-builder enquiry modal, mounted once by the layout. Every CTA
  * on the page opens it with an "intent" (see resume-intents.ts) that tailors the
  * heading, fields and submit label to what was clicked — plan signup, tailoring,
- * format audit or template browse. No backend yet: submit confirms client-side.
+ * format audit or template browse. Submits to the CMS as a lead, tagged with
+ * the intent so the desk knows which CTA produced it.
  */
 
 const ACCENT_GRADIENT = "linear-gradient(95deg, #ffb020, #ea580c)";
@@ -72,8 +74,79 @@ function ResumeModal({
   onClose: () => void;
 }) {
   const [submitted, setSubmitted] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [targetRole, setTargetRole] = useState("");
+  const [jobDescription, setJobDescription] = useState("");
+  const [cv, setCv] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
+
+  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null;
+    if (!file) {
+      setCv(null);
+      setFileName(null);
+      return;
+    }
+    const problem = validateCv(file);
+    if (problem) {
+      setError(problem);
+      setCv(null);
+      setFileName(null);
+      e.target.value = "";
+      return;
+    }
+    setError(null);
+    setCv(file);
+    setFileName(file.name);
+  }
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (pending) return;
+
+    setPending(true);
+    setError(null);
+
+    // Resume first — a failed upload must not file a lead without the file the
+    // whole request is about.
+    let attachmentUrl: string | null = null;
+    let attachmentName: string | null = null;
+    if (cv) {
+      const upload = await uploadCv(cv);
+      if (!upload.ok) {
+        setPending(false);
+        setError(upload.message);
+        return;
+      }
+      attachmentUrl = upload.url;
+      attachmentName = upload.filename;
+    }
+
+    const result = await submitLead({
+      name,
+      email,
+      phoneNo: phone,
+      leadSource: `Resume Builder — ${intent.eyebrow}`,
+      formData: {
+        Request: intent.title,
+        Plan: intent.summary,
+        "Target role / industry": targetRole,
+        "Job description": jobDescription,
+      },
+      attachmentUrl,
+      attachmentName,
+    });
+
+    setPending(false);
+    if (result.ok) setSubmitted(true);
+    else setError(result.message);
+  }
 
   // Lock body scroll, focus the first field, close on Escape, restore focus.
   useEffect(() => {
@@ -175,13 +248,7 @@ function ResumeModal({
               </div>
             )}
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setSubmitted(true);
-              }}
-              className="mt-5 flex flex-col gap-3"
-            >
+            <form onSubmit={onSubmit} className="mt-5 flex flex-col gap-3">
               <div className="grid gap-3 sm:grid-cols-2">
                 <input
                   ref={firstFieldRef}
@@ -189,6 +256,8 @@ function ResumeModal({
                   required
                   aria-label="Full name"
                   placeholder="Full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className={baseInput}
                 />
                 <input
@@ -196,24 +265,29 @@ function ResumeModal({
                   required
                   aria-label="Email"
                   placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className={baseInput}
                 />
               </div>
 
-              {intent.phone && (
-                <input
-                  type="tel"
-                  aria-label="Phone"
-                  placeholder="Phone (optional)"
-                  className={baseInput}
-                />
-              )}
+              <input
+                type="tel"
+                required
+                aria-label="Phone"
+                placeholder="Phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className={baseInput}
+              />
 
               {intent.role && (
                 <input
                   type="text"
                   aria-label="Target role or industry"
                   placeholder="Target role / industry (optional)"
+                  value={targetRole}
+                  onChange={(e) => setTargetRole(e.target.value)}
                   className={baseInput}
                 />
               )}
@@ -222,11 +296,9 @@ function ResumeModal({
                 <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-[#d8cfc3] bg-white px-4 py-3 transition-colors hover:border-[#ff7a00]">
                   <input
                     type="file"
-                    accept=".pdf,.docx"
+                    accept=".pdf,.doc,.docx"
                     className="sr-only"
-                    onChange={(e) =>
-                      setFileName(e.target.files?.[0]?.name ?? null)
-                    }
+                    onChange={onFileChange}
                   />
                   <span
                     className="grid size-7 shrink-0 place-items-center rounded-md text-sm font-bold text-white"
@@ -235,7 +307,7 @@ function ResumeModal({
                     ↑
                   </span>
                   <span className="truncate font-body text-sm text-[#574c44]">
-                    {fileName ?? "Upload your resume (PDF, DOCX)"}
+                    {fileName ?? "Upload your resume (PDF, DOC, DOCX · max 8MB)"}
                   </span>
                 </label>
               )}
@@ -245,16 +317,28 @@ function ResumeModal({
                   aria-label="Job description"
                   placeholder="Paste the job description you're targeting…"
                   rows={4}
+                  value={jobDescription}
+                  onChange={(e) => setJobDescription(e.target.value)}
                   className={`${baseInput} resize-none`}
                 />
               )}
 
+              {error && (
+                <p
+                  role="alert"
+                  className="rounded-xl border-l-2 border-red-500 bg-red-50 px-4 py-3 font-body text-sm text-red-700"
+                >
+                  {error}
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="mt-1 rounded-xl py-3.5 font-body text-[15px] font-bold text-white shadow-[0_10px_26px_-10px_rgba(234,88,12,0.55)] transition-transform hover:-translate-y-0.5"
+                disabled={pending}
+                className="mt-1 rounded-xl py-3.5 font-body text-[15px] font-bold text-white shadow-[0_10px_26px_-10px_rgba(234,88,12,0.55)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                 style={{ backgroundImage: ACCENT_GRADIENT }}
               >
-                {intent.submitLabel}
+                {pending ? (cv ? "Uploading…" : "Sending…") : intent.submitLabel}
               </button>
               <p className="pt-1 text-center font-body text-[11px] text-stone-400">
                 14-day money-back guarantee · we never share your data

@@ -13,7 +13,8 @@ export type ResumeIntent = {
   submitLabel: string;
   /** Optional highlighted summary line, e.g. the chosen plan · period · price. */
   summary?: string;
-  phone?: boolean;
+  // Name, email and phone are collected for every intent — the CMS requires all
+  // three on a lead — so only the extra fields below are configurable.
   role?: boolean;
   resume?: boolean;
   jobDescription?: boolean;
@@ -59,7 +60,6 @@ export function planIntent(
     subtitle:
       "Create your account and we'll email your secure checkout link — no charge yet.",
     submitLabel: "Start my plan →",
-    phone: true,
     role: true,
     summary: `${plan} · ${period} · ${price}/mo`,
   };

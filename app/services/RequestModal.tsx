@@ -8,13 +8,14 @@ import {
   useRef,
   useState,
 } from "react";
+import { submitLead } from "../lib/leads";
 
 /**
  * A single "Request crew / talk to the desk" enquiry modal, mounted once by the
  * services layout. Any CTA on a service page opens it via <RequestModalButton>
  * (or the useRequestModal hook), so the three lead buttons — Contact an Energy
  * HR Consultant, Talk to the desk, Request Talent Profiles — all share one form
- * instead of opening a mailto. No backend yet: submit confirms client-side.
+ * instead of opening a mailto. Submits to the CMS as a lead.
  */
 
 type Ctx = { openModal: () => void };
@@ -59,9 +60,44 @@ export function RequestModalButton({
 const baseInput =
   "w-full min-w-0 bg-gray-50 px-4 py-3 font-plex text-sm text-stone-800 outline outline-1 -outline-offset-1 outline-gray-200 placeholder:text-stone-400 focus:outline-orange-500";
 
+// Submits to the CMS as a lead — see app/lib/leads.ts for the payload contract.
+
 function RequestModal({ onClose }: { onClose: () => void }) {
   const [submitted, setSubmitted] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [name, setName] = useState("");
+  const [company, setCompany] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [scope, setScope] = useState("");
+  const [details, setDetails] = useState("");
   const firstFieldRef = useRef<HTMLInputElement>(null);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (pending) return;
+
+    setPending(true);
+    setError(null);
+
+    const result = await submitLead({
+      name,
+      email,
+      phoneNo: phone,
+      leadSource: "Services — Contract Manpower Supply",
+      formData: {
+        Company: company,
+        "Region & scope": scope,
+        "Project details": details,
+      },
+    });
+
+    setPending(false);
+    if (result.ok) setSubmitted(true);
+    else setError(result.message);
+  }
 
   // Lock body scroll, focus the first field, close on Escape, restore focus.
   useEffect(() => {
@@ -149,13 +185,7 @@ function RequestModal({ onClose }: { onClose: () => void }) {
               mobilization window and rate band within one business day.
             </p>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setSubmitted(true);
-              }}
-              className="mt-6 flex flex-col gap-3"
-            >
+            <form onSubmit={onSubmit} className="mt-6 flex flex-col gap-3">
               <div className="grid gap-3 sm:grid-cols-2">
                 <input
                   ref={firstFieldRef}
@@ -163,6 +193,8 @@ function RequestModal({ onClose }: { onClose: () => void }) {
                   required
                   aria-label="Full name"
                   placeholder="Full name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className={baseInput}
                 />
                 <input
@@ -170,6 +202,8 @@ function RequestModal({ onClose }: { onClose: () => void }) {
                   required
                   aria-label="Company"
                   placeholder="Company"
+                  value={company}
+                  onChange={(e) => setCompany(e.target.value)}
                   className={baseInput}
                 />
               </div>
@@ -179,12 +213,17 @@ function RequestModal({ onClose }: { onClose: () => void }) {
                   required
                   aria-label="Work email"
                   placeholder="Work email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className={baseInput}
                 />
                 <input
                   type="tel"
+                  required
                   aria-label="Phone"
-                  placeholder="Phone (optional)"
+                  placeholder="Phone number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   className={baseInput}
                 />
               </div>
@@ -193,22 +232,37 @@ function RequestModal({ onClose }: { onClose: () => void }) {
                 required
                 aria-label="Region and scope"
                 placeholder="Region & scope (e.g. 40 crew · North Sea · Q3)"
+                value={scope}
+                onChange={(e) => setScope(e.target.value)}
                 className={baseInput}
               />
               <textarea
                 aria-label="Project details"
                 placeholder="Disciplines, headcount, timeline… (optional)"
                 rows={3}
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
                 className={`${baseInput} resize-none`}
               />
+
+              {error && (
+                <p
+                  role="alert"
+                  className="border-l-2 border-red-500 bg-red-50 px-4 py-3 font-plex text-sm text-red-700"
+                >
+                  {error}
+                </p>
+              )}
+
               <button
                 type="submit"
-                className="mt-1 flex items-center justify-center rounded-lg px-6 py-3.5 font-jbmono text-xs font-bold uppercase tracking-wider text-white shadow-[0_12px_30px_-8px_rgba(234,88,12,0.55)] transition-transform hover:-translate-y-0.5"
+                disabled={pending}
+                className="mt-1 flex items-center justify-center rounded-lg px-6 py-3.5 font-jbmono text-xs font-bold uppercase tracking-wider text-white shadow-[0_12px_30px_-8px_rgba(234,88,12,0.55)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
                 style={{
                   backgroundImage: "linear-gradient(30deg, #eab308, #ea580c)",
                 }}
               >
-                [ Send request → ]
+                {pending ? "[ Sending… ]" : "[ Send request → ]"}
               </button>
               <p className="pt-1 text-center font-jbmono text-[11px] tracking-wide text-stone-400">
                 Your data is handled under GDPR &amp; local labour law
