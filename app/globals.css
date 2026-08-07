@@ -930,3 +930,58 @@ html[data-reveal-ready] [data-aos].is-in {
 /* TipTap's column-resize artefacts have no meaning in read-only output. */
 .jd-body .column-resize-handle,
 .jd-body .tableWrapper > .resize-cursor { display: none; }
+
+/* Long-form article body ------------------------------------------------
+   Blog posts render the same CMS-authored HTML as a job description, so they
+   reuse .jd-body for the element-level work (lists, tables, code, TipTap
+   artefacts) and layer this on top. Only the reading scale differs: a JD is
+   scanned, an article is read, so the type and the heading steps grow.
+   Applied as `class="jd-body article-body"` — .article-body alone is not
+   enough.                                                                */
+
+.article-body {
+  font-size: 15.5px;
+}
+
+/* Headings step up from the JD's 28/20/17 to the article design's 32/24/20,
+   reaching 28px for h2 once there is room for it. */
+.article-body h1 { font-size: 2rem; }      /* 32px */
+.article-body h2 { font-size: 1.5rem; }    /* 24px */
+.article-body h3 { font-size: 1.25rem; }   /* 20px */
+
+@media (min-width: 640px) {
+  .article-body h2 { font-size: 1.75rem; } /* 28px */
+}
+
+/* Anchor targets sit under the sticky header, so scrolling to a TOC link
+   must not tuck the heading beneath it. */
+.article-body :is(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: 6rem;
+}
+
+/* The opening paragraph carries the piece — larger and darker, matching the
+   standfirst in the original hand-built article. */
+.article-body > p:first-child {
+  font-size: 1.125rem;
+  line-height: 2rem;
+  color: #27272a;
+}
+
+/* A pull quote is a display element in an article rather than the quiet
+   aside it is in a JD. */
+.article-body blockquote {
+  border-left-width: 2px;
+  padding-left: 1.5rem;
+  font-family: var(--ff-poppins), "Poppins", sans-serif;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #171717;
+}
+
+/* Editor images are full-bleed within the column and get room to breathe. */
+.article-body img {
+  width: 100%;
+  margin-block: 2rem;
+}

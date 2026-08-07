@@ -1,32 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { ArticleHeading } from "../article-html";
 
-// Matches the shared article body's <h2 id="…"> headings.
-const ITEMS = [
-  { id: "supply-gap", label: "A supply gap three years in the making" },
-  { id: "where-sharpest", label: "Where the squeeze is sharpest" },
-  { id: "what-operators", label: "What leading operators are doing" },
-];
-
-export default function ArticleToc() {
-  const [active, setActive] = useState(ITEMS[0].id);
+/**
+ * "On this page" sidebar. Headings come from the rendered article HTML (see
+ * article-html.ts), so the list always matches whatever the editor wrote —
+ * it used to be a hardcoded three-item list describing one placeholder body.
+ */
+export default function ArticleToc({ headings }: { headings: ArticleHeading[] }) {
+  const [active, setActive] = useState(headings[0]?.id ?? "");
 
   useEffect(() => {
-    const headings = ITEMS.map((i) => document.getElementById(i.id)).filter(
-      (el): el is HTMLElement => el !== null,
-    );
+    const elements = headings
+      .map((h) => document.getElementById(h.id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    if (elements.length === 0) return;
+
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) setActive(entry.target.id);
         }
       },
-      { rootMargin: "-15% 0px -70% 0px", threshold: 0 },
+      { rootMargin: "-15% 0px -70% 0px", threshold: 0 }
     );
-    headings.forEach((h) => io.observe(h));
+    elements.forEach((el) => io.observe(el));
     return () => io.disconnect();
-  }, []);
+  }, [headings]);
+
+  // An article with no headings gets no empty box.
+  if (headings.length === 0) return null;
 
   return (
     <nav aria-label="On this page" className="border border-gray-200 p-5">
@@ -34,20 +39,22 @@ export default function ArticleToc() {
         On this page
       </div>
       <ul className="mt-4 space-y-1">
-        {ITEMS.map((i) => {
-          const isActive = active === i.id;
+        {headings.map((h) => {
+          const isActive = active === h.id;
           return (
-            <li key={i.id}>
+            <li key={h.id}>
               <a
-                href={`#${i.id}`}
+                href={`#${h.id}`}
                 aria-current={isActive ? "true" : undefined}
-                className={`block border-l-2 py-1 pl-3 font-plex text-sm leading-snug transition-colors ${
+                className={`block border-l-2 py-1 font-plex text-sm leading-snug transition-colors ${
+                  h.level === 3 ? "pl-6" : "pl-3"
+                } ${
                   isActive
                     ? "border-orange-500 font-medium text-neutral-900"
                     : "border-gray-200 text-zinc-500 hover:text-neutral-900"
                 }`}
               >
-                {i.label}
+                {h.label}
               </a>
             </li>
           );
