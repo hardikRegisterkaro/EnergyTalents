@@ -6,45 +6,13 @@
  * its colour through the animation.
  */
 
-const DISCIPLINES = [
-  {
-    n: "01",
-    title: "Contract Staffing",
-    body: "EPC managers, discipline engineers and commissioning leads for megaprojects.",
-  },
-  {
-    n: "02",
-    title: "Employer of Record (EOR)",
-    body: "DP operators, ROV pilots, toolpushers and subsea engineering crews.",
-  },
-  {
-    n: "03",
-    title: "Global Mobility & Logistics",
-    body: "Safety officers, QA/QC inspectors and incident-free site governance.",
-  },
-  {
-    n: "04",
-    title: "Permanent Direct Hire",
-    body: "GWO-certified wind techs, solar EPC crews and grid integration teams.",
-  },
-  {
-    n: "05",
-    title: "Executive Search",
-    body: "Country managers, asset directors and scarce senior technical leadership.",
-  },
-  {
-    n: "06",
-    title: "Managed Service Provision (MSP)",
-    body: "Compliant local-entity payroll, visas and end-to-end travel logistics.",
-  },
-];
-
-const STATS = [
-  { number: "Fast", suffix: "", label: "Vetted shortlist" },
-  { number: "Global", suffix: "", label: "Deployment reach" },
-  { number: "24/7", suffix: "", label: "Rotation support" },
-  { number: "0", suffix: " fees", label: "Contractors never pay" },
-];
+export type DisciplinesProps = {
+  eyebrow: string;
+  heading: string;
+  intro?: string;
+  disciplines: { title: string; body: string }[];
+  stats: { value: string; label: string }[];
+};
 
 // Column dividers: none on the first item of each row, present otherwise —
 // tracked separately for the 2-up (sm) and 3-up (lg) breakpoints.
@@ -66,7 +34,13 @@ function statDivider(i: number) {
   return `${base} ${md}`;
 }
 
-export default function DisciplinesSection() {
+export default function DisciplinesSection({
+  eyebrow,
+  heading,
+  intro,
+  disciplines,
+  stats,
+}: DisciplinesProps) {
   return (
     <section className="bg-white pt-16 md:pt-24">
       <div className="mx-auto max-w-[1276px] px-4 sm:px-6">
@@ -79,26 +53,25 @@ export default function DisciplinesSection() {
             <div className="flex items-center gap-3.5">
               <span className="h-[1.5px] w-10 bg-orange-500" />
               <span className="font-jbmono text-xs uppercase tracking-[0.24em] text-orange-500">
-                At a glance
+                {eyebrow}
               </span>
             </div>
             <h2 className="mt-5 font-archivo text-[26px] font-bold leading-[1.15] text-stone-900 sm:text-[38px] sm:leading-[1.1]">
-              Disciplines &amp; workforce
-              <br />
-              types we supply
+              {heading}
             </h2>
           </div>
-          <p className="max-w-sm font-plex text-base leading-6 text-stone-600 lg:text-right">
-            Pre-vetted talent pools across every technical niche the energy
-            sector demands — ready to mobilize on your timeline.
-          </p>
+          {intro && (
+            <p className="max-w-sm font-plex text-base leading-6 text-stone-600 lg:text-right">
+              {intro}
+            </p>
+          )}
         </div>
 
         {/* Grid */}
         <div className="mt-12 grid grid-cols-1 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-          {DISCIPLINES.map((d, i) => (
+          {disciplines.map((d, i) => (
             <div
-              key={d.n}
+              key={d.title}
               data-aos="fade-up"
               data-aos-delay={`${(i % 3) * 80}`}
               className={`flex flex-col pr-0 sm:pr-8 ${cardDivider(i)}`}
@@ -111,7 +84,7 @@ export default function DisciplinesSection() {
                 <span className="grid size-11 place-items-center border border-gray-200">
                   <span aria-hidden className="size-4 rotate-45 bg-orange-500" />
                 </span>
-                <span className="font-jbmono text-xs text-gray-300">{d.n}</span>
+                <span className="font-jbmono text-xs text-gray-300">\n                  {String(i + 1).padStart(2, "0")}\n                </span>
               </div>
 
               <h3 className="mt-6 font-archivo text-lg font-bold leading-6 text-stone-900">
@@ -129,7 +102,7 @@ export default function DisciplinesSection() {
       <div className="mt-16 border-t border-gray-200 bg-gray-50 md:mt-20">
         <div className="mx-auto max-w-[1276px] px-4 py-12 sm:px-6">
           <div className="grid grid-cols-2 gap-y-10 md:grid-cols-4 md:gap-y-0">
-            {STATS.map((s, i) => (
+            {stats.map((s, i) => (
               <div
                 key={s.label}
                 data-aos="fade-up"
@@ -137,8 +110,7 @@ export default function DisciplinesSection() {
                 className={statDivider(i)}
               >
                 <div className="flex items-baseline font-archivo text-4xl font-extrabold leading-none text-stone-900 sm:text-5xl">
-                  <span>{s.number}</span>
-                  <span className="text-orange-500">{s.suffix}</span>
+                  <span>{s.value}</span>
                 </div>
                 <div className="mt-3 font-jbmono text-[11px] uppercase tracking-wider text-gray-500">
                   {s.label}

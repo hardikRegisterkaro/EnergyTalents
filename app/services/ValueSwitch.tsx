@@ -5,45 +5,23 @@
  * that points to Energy Talents.
  */
 
-const OLD_WAY = [
-  {
-    title: "3-week screening times",
-    body: "Manual CV trawling and slow reference loops.",
-  },
-  {
-    title: "Hidden compliance risk",
-    body: "Co-employment exposure and unclear liability.",
-  },
-  {
-    title: "Slow visa & mobility",
-    body: "Fragmented third-party mobilization handoffs.",
-  },
-  {
-    title: "Zero real-time visibility",
-    body: "Email threads instead of a live status desk.",
-  },
-];
+export type ValueSwitchProps = {
+  eyebrow: string;
+  heading: string;
+  intro?: string;
+  /** Left card: the status quo. `heading` names it, e.g. "Traditional Agencies". */
+  oldWay: { heading: string; rows: { title: string; body: string }[] };
+  /** Right card: us. */
+  ourWay: { heading: string; rows: { title: string; body: string }[] };
+};
 
-const OUR_WAY = [
-  {
-    title: "72-hour vetted shortlist",
-    body: "Pre-screened talent pools, ready to deploy.",
-  },
-  {
-    title: "100% compliant local payroll",
-    body: "Owned legal entities in 80+ regions.",
-  },
-  {
-    title: "End-to-end mobilization tracking",
-    body: "Visas, medicals and travel on one timeline.",
-  },
-  {
-    title: "Dedicated account managers",
-    body: "A single accountable desk, every region.",
-  },
-];
-
-export default function ValueSwitch() {
+export default function ValueSwitch({
+  eyebrow,
+  heading,
+  intro,
+  oldWay,
+  ourWay,
+}: ValueSwitchProps) {
   return (
     <section className="bg-gray-50 px-4 py-16 sm:px-6 md:py-24">
       <div className="mx-auto max-w-[1276px]">
@@ -56,19 +34,18 @@ export default function ValueSwitch() {
             <div className="flex items-center gap-3.5">
               <span className="h-[1.5px] w-6 bg-orange-500" />
               <span className="font-jbmono text-xs font-medium uppercase tracking-[0.24em] text-orange-500">
-                The Value Switch
+                {eyebrow}
               </span>
             </div>
             <h2 className="mt-4 font-poppins text-[26px] font-extrabold leading-[1.15] text-neutral-900 sm:text-[38px] sm:leading-[1.1]">
-              Why operators choose us
-              <br />
-              over the old way
+              {heading}
             </h2>
           </div>
-          <p className="max-w-sm font-plex text-base leading-6 text-zinc-600 lg:text-right">
-            Traditional agencies run on manual processes and hidden risk. We run
-            the same workflow on a tech-driven, single-contract model.
-          </p>
+          {intro && (
+            <p className="max-w-sm font-plex text-base leading-6 text-zinc-600 lg:text-right">
+              {intro}
+            </p>
+          )}
         </div>
 
         {/* Comparison cards */}
@@ -80,17 +57,17 @@ export default function ValueSwitch() {
           >
             <div className="flex items-center justify-between border-b border-gray-200 px-6 py-5">
               <span className="font-poppins text-lg font-bold text-neutral-900">
-                Traditional Agencies
+                {oldWay.heading}
               </span>
               <span className="border border-zinc-400 px-2.5 py-[5px] font-jbmono text-[10px] tracking-wider text-zinc-400">
                 THE OLD WAY
               </span>
             </div>
-            {OLD_WAY.map((r, i) => (
+            {oldWay.rows.map((r, i) => (
               <div
                 key={r.title}
                 className={`flex items-start gap-3.5 px-6 py-4 ${
-                  i < OLD_WAY.length - 1 ? "border-b border-gray-200" : ""
+                  i < oldWay.rows.length - 1 ? "border-b border-gray-200" : ""
                 }`}
               >
                 <span className="grid size-5 shrink-0 place-items-center bg-red-50 font-jbmono text-xs font-bold text-orange-700 outline outline-1 -outline-offset-1 outline-stone-200">
@@ -116,17 +93,17 @@ export default function ValueSwitch() {
           >
             <div className="flex items-center justify-between bg-orange-500 px-6 py-5">
               <span className="font-poppins text-lg font-bold text-white">
-                Energy Talents
+                {ourWay.heading}
               </span>
               <span className="border border-white px-2.5 py-[5px] font-jbmono text-[10px] tracking-wider text-white">
                 OUR WAY
               </span>
             </div>
-            {OUR_WAY.map((r, i) => (
+            {ourWay.rows.map((r, i) => (
               <div
                 key={r.title}
                 className={`flex items-start gap-3.5 px-6 py-4 ${
-                  i < OUR_WAY.length - 1 ? "border-b border-gray-200" : ""
+                  i < ourWay.rows.length - 1 ? "border-b border-gray-200" : ""
                 }`}
               >
                 <span className="grid size-5 shrink-0 place-items-center bg-orange-500 font-jbmono text-xs font-bold text-white">
@@ -149,10 +126,10 @@ export default function ValueSwitch() {
         <div className="flex justify-center pt-10">
           <div className="inline-flex gap-1 border border-gray-200 bg-white p-[5px]">
             <span className="px-5 py-2.5 font-jbmono text-xs font-bold tracking-wide text-neutral-400">
-              TRADITIONAL AGENCY
+              {oldWay.heading}
             </span>
             <span className="bg-orange-500 px-5 py-2.5 font-jbmono text-xs font-bold tracking-wide text-white">
-              ENERGY TALENTS
+              {ourWay.heading}
             </span>
           </div>
         </div>
