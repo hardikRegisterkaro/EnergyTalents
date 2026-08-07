@@ -13,31 +13,21 @@ import { planIntent } from "./resume-intents";
 const ACCENT_GRADIENT = "linear-gradient(95deg, #ffb020, #ea580c)";
 const LI_BLUE = "#0a66c2";
 
-const PERIODS = ["Monthly", "Quarterly", "6 Months"];
+export type PricingFeature = { lead: string; rest: string };
 
-const RESUME = {
-  price: ["₹799", "₹599", "₹499"],
-  note: ["Billed monthly", "$99 billed every 3 months", "$179 billed every 6 months"],
-};
-const COMBO = {
-  price: ["₹1,199", "₹899", "₹749"],
-  note: ["Billed monthly", "$149 billed every 3 months", "$259 billed every 6 months"],
+export type PricingPlan = {
+  /** Price per billing period, index-aligned with `periods`. */
+  price: string[];
+  /** Small print under the price, index-aligned with `periods`. */
+  note: string[];
+  features: PricingFeature[];
 };
 
-const RESUME_FEATURES = [
-  { lead: "AI Keyword Tailor", rest: "" },
-  { lead: "Unlimited", rest: " ATS Scan Audits" },
-  { lead: "Premium Layouts", rest: " (100+)" },
-  { lead: "Real-time content scoring", rest: "" },
-  { lead: "Priority support", rest: "" },
-];
-const COMBO_FEATURES = [
-  { lead: "Everything in Pro", rest: "", li: false },
-  { lead: "Done-for-you LinkedIn profile", rest: " — built from scratch", li: true },
-  { lead: "Recruiter-search SEO", rest: " — keyword-tuned headline & About", li: false },
-  { lead: "Synced with your resume", rest: " — one update, both stories", li: false },
-  { lead: "Profile-strength report", rest: " every month", li: false },
-];
+export type PricingProps = {
+  periods: string[];
+  resume: PricingPlan;
+  combo: PricingPlan;
+};
 
 function Tick({ tone, li }: { tone: "orange" | "blue"; li?: boolean }) {
   const bg = tone === "orange" ? "bg-[#fff0e0]" : "bg-[#e8f1fa]";
@@ -57,8 +47,12 @@ function Tick({ tone, li }: { tone: "orange" | "blue"; li?: boolean }) {
   );
 }
 
-export default function PricingCard() {
-  const [active, setActive] = useState(1); // Quarterly
+export default function PricingCard({ periods, resume, combo }: PricingProps) {
+  // Default to the middle option when there is one — it was Quarterly in the
+  // shipped design — but stay in range for any number of periods.
+  const [active, setActive] = useState(() =>
+    periods.length > 1 ? Math.min(1, periods.length - 1) : 0
+  );
   const { openModal } = useResumeModal();
 
   return (
@@ -69,7 +63,7 @@ export default function PricingCard() {
         aria-label="Billing period"
         className="mx-auto flex max-w-[340px] gap-1 rounded-xl border border-linec bg-[#f4f2ee] p-1"
       >
-        {PERIODS.map((p, i) => {
+        {periods.map((p, i) => {
           const on = i === active;
           return (
             <button
@@ -99,15 +93,15 @@ export default function PricingCard() {
           </span>
           <div className="mt-3 flex items-baseline gap-1.5">
             <span className="font-jakarta text-[40px] font-extrabold leading-none text-ink">
-              {RESUME.price[active]}
+              {resume.price[active]}
             </span>
             <span className="font-body text-sm font-medium text-stone-400">/mo</span>
           </div>
           <div className="mt-2 font-body text-[13px] text-body2">
-            {RESUME.note[active]}
+            {resume.note[active]}
           </div>
           <ul className="mt-5 grid gap-3">
-            {RESUME_FEATURES.map((f) => (
+            {resume.features.map((f) => (
               <li key={f.lead} className="flex items-center gap-3">
                 <Tick tone="orange" />
                 <span className="font-body text-sm text-ink">
@@ -121,7 +115,7 @@ export default function PricingCard() {
             type="button"
             onClick={() =>
               openModal(
-                planIntent("Resume Only", PERIODS[active], RESUME.price[active]),
+                planIntent("Resume Only", periods[active], resume.price[active]),
               )
             }
             className="mt-auto block w-full rounded-xl pt-0 text-center"
@@ -155,17 +149,17 @@ export default function PricingCard() {
             </span>
             <div className="mt-3 flex items-baseline gap-1.5">
               <span className="font-jakarta text-[40px] font-extrabold leading-none text-ink">
-                {COMBO.price[active]}
+                {combo.price[active]}
               </span>
               <span className="font-body text-sm font-medium text-stone-400">/mo</span>
             </div>
             <div className="mt-2 font-body text-[13px] text-body2">
-              {COMBO.note[active]}
+              {combo.note[active]}
             </div>
             <ul className="mt-5 grid gap-3">
-              {COMBO_FEATURES.map((f) => (
+              {combo.features.map((f) => (
                 <li key={f.lead} className="flex items-center gap-3">
-                  <Tick tone="blue" li={f.li} />
+                  <Tick tone="blue" li={/linkedin/i.test(`${f.lead} ${f.rest}`)} />
                   <span className="font-body text-sm text-ink">
                     <b>{f.lead}</b>
                     {f.rest}
@@ -179,8 +173,8 @@ export default function PricingCard() {
                 openModal(
                   planIntent(
                     "Resume + LinkedIn",
-                    PERIODS[active],
-                    COMBO.price[active],
+                    periods[active],
+                    combo.price[active],
                   ),
                 )
               }

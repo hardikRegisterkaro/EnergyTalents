@@ -31,6 +31,14 @@ type Params = { params: Promise<{ slug: string }> };
  * There is deliberately no hardcoded fallback: the CMS is the only source, and
  * a slug it does not publish is a 404.
  */
+/**
+ * The layout this route renders. Other templates reuse the ServicePage model
+ * for pages that live elsewhere — /resume-builder is stored as one — so a
+ * page whose template is not "division" must not be reachable here, or it
+ * would render under the wrong design at a second URL.
+ */
+const DIVISION_TEMPLATE = "division";
+
 export async function generateStaticParams() {
   const services = await getServiceSlugs();
   return services.map((s) => ({ slug: s.slug }));
@@ -39,7 +47,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
   const page = await getServicePage(slug);
-  if (!page) return {};
+  if (!page || page.template !== DIVISION_TEMPLATE) return {};
 
   const title = page.metaTitle || page.content?.titleLead || slug;
   const description = page.metaDescription || page.content?.subtitle || undefined;
@@ -58,7 +66,7 @@ const DISCIPLINE_STATS_ID = "disciplines-stats";
 export default async function ServicePage({ params }: Params) {
   const { slug } = await params;
   const page = await getServicePage(slug);
-  if (!page) notFound();
+  if (!page || page.template !== DIVISION_TEMPLATE) notFound();
 
   const content = page.content ?? {};
 

@@ -164,7 +164,21 @@ export async function getServicePage(slug: string): Promise<ServicePage | null> 
   }
 }
 
-/** Every published service slug — for generateStaticParams and the sitemap. */
+/**
+ * ServicePage slugs that are NOT services: stored in the same model but
+ * rendered by a dedicated route elsewhere on the site. They must never appear
+ * under /services/<slug>.
+ */
+const OWN_ROUTE_SLUGS = new Set(["resume-builder"]);
+
+/**
+ * Published service slugs, for generateStaticParams and the sitemap.
+ *
+ * Filtered to the division template: the ServicePage model also backs pages
+ * that live outside /services (the resume builder is stored as one), and
+ * listing those here would prerender and advertise /services/<slug> URLs that
+ * the route deliberately 404s.
+ */
 export async function getServiceSlugs(): Promise<
   Array<{ slug: string; updatedAt?: string }>
 > {
@@ -176,9 +190,24 @@ export async function getServiceSlugs(): Promise<
     if (!res.ok) return [];
     const json = (await res.json()) as {
       success?: boolean;
-      services?: Array<{ slug: string; updatedAt?: string }>;
+      services?: Array<{ slug: string; updatedAt?: string; template?: string }>;
     };
-    return json?.success && Array.isArray(json.services) ? json.services : [];
+    if (!json?.success || !Array.isArray(json.services)) return [];
+
+    // Always drop slugs the frontend renders from their own route. Belt and
+    // braces: `template` only tells us apart once the CMS exposing it is
+    // deployed, and until then every page looks like a division page — which
+    // would prerender /services/resume-builder as a 404 and advertise it in
+    // the sitemap.
+    const candidates = json.services.filter((s) => !OWN_ROUTE_SLUGS.has(s.slug));
+
+    // Filter on template only when the CMS actually returns it; an older
+    // deployment omits the field entirely, and treating that as "not a
+    // division page" would empty the list.
+    const cmsSendsTemplate = candidates.some((s) => s.template !== undefined);
+    return cmsSendsTemplate
+      ? candidates.filter((s) => s.template === "division")
+      : candidates;
   } catch {
     return [];
   }
