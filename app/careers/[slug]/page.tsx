@@ -136,7 +136,7 @@ export default async function RoleApplyPage({ params }: Params) {
 
           {/* Right — apply form (sticky on desktop) */}
           <aside className="lg:sticky lg:top-24 lg:self-start">
-            <ApplyForm roleTitle={role.title} />
+            <ApplyForm roleTitle={role.title} roleSlug={role.slug} />
           </aside>
         </div>
       </div>

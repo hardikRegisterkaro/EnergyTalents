@@ -1,18 +1,93 @@
 "use client";
 
 import { useState } from "react";
+import { submitLead, uploadCv, validateCv } from "../lib/leads";
 
 const inputClass =
   "w-full bg-white px-4 py-3.5 font-hanken text-sm text-zinc-800 outline outline-1 -outline-offset-1 outline-gray-200 placeholder:text-zinc-400 focus:outline-orange-500";
 
 export default function PipelineForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const [name, setName] = useState("");
+  const [trade, setTrade] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [tickets, setTickets] = useState("");
+  const [cv, setCv] = useState<File | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
 
-  function onSubmit(e: React.FormEvent) {
+  function reset() {
+    setSubmitted(false);
+    setError(null);
+    setName("");
+    setTrade("");
+    setEmail("");
+    setPhone("");
+    setTickets("");
+    setCv(null);
+    setFileName(null);
+  }
+
+  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null;
+    if (!file) {
+      setCv(null);
+      setFileName(null);
+      return;
+    }
+    const problem = validateCv(file);
+    if (problem) {
+      setError(problem);
+      setCv(null);
+      setFileName(null);
+      e.target.value = "";
+      return;
+    }
+    setError(null);
+    setCv(file);
+    setFileName(file.name);
+  }
+
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // No backend yet — acknowledge client-side so the flow is complete.
-    setSubmitted(true);
+    if (pending) return;
+
+    setPending(true);
+    setError(null);
+
+    // CV first — a failed upload must not file a lead with a missing CV.
+    let attachmentUrl: string | null = null;
+    let attachmentName: string | null = null;
+    if (cv) {
+      const upload = await uploadCv(cv);
+      if (!upload.ok) {
+        setPending(false);
+        setError(upload.message);
+        return;
+      }
+      attachmentUrl = upload.url;
+      attachmentName = upload.filename;
+    }
+
+    const result = await submitLead({
+      name,
+      email,
+      phoneNo: phone,
+      leadSource: "Careers — Talent Pipeline",
+      formData: {
+        "Trade / discipline": trade,
+        "Tickets held": tickets,
+      },
+      attachmentUrl,
+      attachmentName,
+    });
+
+    setPending(false);
+    if (result.ok) setSubmitted(true);
+    else setError(result.message);
   }
 
   if (submitted) {
@@ -34,10 +109,7 @@ export default function PipelineForm() {
         </p>
         <button
           type="button"
-          onClick={() => {
-            setSubmitted(false);
-            setFileName(null);
-          }}
+          onClick={reset}
           className="mt-6 border border-neutral-900/25 px-5 py-2.5 font-jbmono text-xs font-bold uppercase tracking-wide text-neutral-900 transition-colors hover:border-neutral-900/50"
         >
           Register another
@@ -68,6 +140,8 @@ export default function PipelineForm() {
             required
             aria-label="Full name"
             placeholder="Full name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className={inputClass}
           />
           <input
@@ -76,45 +150,77 @@ export default function PipelineForm() {
             required
             aria-label="Trade / discipline"
             placeholder="Trade / discipline"
+            value={trade}
+            onChange={(e) => setTrade(e.target.value)}
             className={inputClass}
           />
         </div>
-        <input
-          type="email"
-          name="email"
-          required
-          aria-label="Email"
-          placeholder="Email"
-          className={inputClass}
-        />
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <input
+            type="email"
+            name="email"
+            required
+            aria-label="Email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClass}
+          />
+          <input
+            type="tel"
+            name="phone"
+            required
+            aria-label="Phone number"
+            placeholder="Phone number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className={inputClass}
+          />
+        </div>
         <input
           type="text"
           name="tickets"
           aria-label="Tickets held"
           placeholder="Tickets held (e.g. BOSIET, GWO, OPITO)"
+          value={tickets}
+          onChange={(e) => setTickets(e.target.value)}
           className={inputClass}
         />
 
         <label className="flex cursor-pointer items-center gap-3 px-4 py-3.5 outline outline-1 -outline-offset-1 outline-neutral-300 transition-colors hover:outline-orange-500">
           <input
             type="file"
-            accept=".pdf,.docx"
+            accept=".pdf,.doc,.docx"
             className="sr-only"
-            onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+            onChange={onFileChange}
           />
           <span className="grid size-7 shrink-0 place-items-center bg-orange-500 font-jbmono text-sm font-bold text-white">
             ↑
           </span>
           <span className="truncate font-hanken text-sm text-zinc-600">
-            {fileName ?? "Upload CV / certifications (PDF, DOCX)"}
+            {fileName ?? "Upload CV / certifications (PDF, DOC, DOCX · max 8MB)"}
           </span>
         </label>
 
+        {error && (
+          <p
+            role="alert"
+            className="border-l-2 border-red-500 bg-red-50 px-3 py-2 font-hanken text-sm text-red-700"
+          >
+            {error}
+          </p>
+        )}
+
         <button
           type="submit"
-          className="flex items-center justify-center gap-[5px] rounded-xl px-6 py-3.5 font-jbmono text-xs font-bold uppercase tracking-wider text-white shadow-[0px_10px_30px_-8px_rgba(234,88,12,0.40)] transition-transform hover:-translate-y-0.5 bg-[linear-gradient(30deg,#eab308,#ea580c)]"
+          disabled={pending}
+          className="flex items-center justify-center gap-[5px] rounded-xl px-6 py-3.5 font-jbmono text-xs font-bold uppercase tracking-wider text-white shadow-[0px_10px_30px_-8px_rgba(234,88,12,0.40)] transition-transform hover:-translate-y-0.5 bg-[linear-gradient(30deg,#eab308,#ea580c)] disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
         >
-          [ Join the pipeline → ]
+          {pending
+            ? cv
+              ? "[ Uploading… ]"
+              : "[ Sending… ]"
+            : "[ Join the pipeline → ]"}
         </button>
       </div>
 
