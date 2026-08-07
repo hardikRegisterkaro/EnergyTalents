@@ -1,11 +1,26 @@
-import PricingCard from "./PricingCard";
+import PricingCard, { type PricingProps } from "./PricingCard";
 
 /**
  * Resume-builder hero — centered pill, gradient headline, subhead, a billing
  * toggle over two plan cards (Resume Only / Resume + LinkedIn), and a trust
  * line, over a single soft top glow. Adapted from the Insights hero design.
+ *
+ * The headline and subhead are part of the design; only the pricing beneath
+ * them is editor-managed, so that is all this takes as props.
  */
-export default function Hero() {
+export default function Hero({
+  pill,
+  headingLead,
+  headingAccent,
+  subhead,
+  pricing,
+}: {
+  pill?: string;
+  headingLead?: string;
+  headingAccent?: string;
+  subhead?: string;
+  pricing: PricingProps;
+}) {
   return (
     <section className="relative overflow-hidden bg-white px-4 pb-16 pt-14 sm:px-6 md:pb-20 md:pt-20">
       {/* Soft top glow */}
@@ -25,7 +40,7 @@ export default function Hero() {
           className="inline-flex items-center gap-2 rounded-full border border-[#ffe8d1] bg-[#fff4e8] px-4 py-2 font-body text-[12.5px] font-bold tracking-[0.06em] text-[#ea580c]"
         >
           <span className="size-1.5 rounded-full bg-[#f97316]" />
-          RECRUITER-APPROVED · ATS-FRIENDLY
+          {pill ?? "RECRUITER-APPROVED · ATS-FRIENDLY"}
         </div>
 
         {/* Heading */}
@@ -33,11 +48,9 @@ export default function Hero() {
           data-aos="fade-up"
           className="mt-6 font-jakarta text-[clamp(2rem,4.6vw,3.4rem)] font-extrabold leading-[1.08] tracking-tight text-[#231a14]"
         >
-          Build a strikingly powerful
-          <br />
-          resume{" "}
+          {headingLead ?? "Build a strikingly powerful resume"}{" "}
           <span className="bg-gradient-to-r from-[#fb923c] to-[#ea580c] bg-clip-text text-transparent">
-            approved by recruiters
+            {headingAccent ?? "approved by recruiters"}
           </span>
         </h1>
 
@@ -46,13 +59,13 @@ export default function Hero() {
           data-aos="fade-up"
           className="mx-auto mt-6 max-w-[560px] font-body text-[17px] leading-relaxed text-[#574c44]"
         >
-          Craft a job-winning, ATS-optimized resume in minutes — with AI content
-          suggestions, real-time scoring and 100+ recruiter-tested templates.
+          {subhead ??
+            "Craft a job-winning, ATS-optimized resume in minutes — with AI content suggestions, real-time scoring and 100+ recruiter-tested templates."}
         </p>
 
         {/* Pricing (toggle + two plan cards) */}
         <div data-aos="fade-up" className="w-full">
-          <PricingCard />
+          <PricingCard {...pricing} />
         </div>
 
         {/* Trust line */}

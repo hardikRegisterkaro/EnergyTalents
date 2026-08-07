@@ -7,34 +7,10 @@ import { useState } from "react";
  * open by default); the orange +/− marker is CSS (the vertical bar fades out
  * when open).
  */
-const FAQS = [
-  {
-    q: "How does the ATS scanner actually read my resume?",
-    a: "We parse your document the way real applicant tracking systems do — extracting the raw text stream, checking heading structure and fonts, and scoring keyword coverage against the role, then showing exactly what to fix.",
-  },
-  {
-    q: "Will my formatting survive when exported to PDF?",
-    a: "Yes. Every template is engineered so the exported PDF keeps a clean, single-column text layer underneath — what you see on screen is exactly what the scanner and a human reviewer receive.",
-  },
-  {
-    q: "Is my personal data kept private?",
-    a: "Always. Your resume content is encrypted in transit and at rest, never sold, and you can permanently delete your data from your account settings at any time.",
-  },
-  {
-    q: "How do I manage or cancel my premium subscription?",
-    a: "Manage everything from your billing dashboard — switch plans, update payment details or cancel in one click. Cancel anytime and you keep Pro access until the end of your billing period.",
-  },
-  {
-    q: "Can I export to Word and plain text too?",
-    a: "Yes. Alongside the ATS-optimized PDF, you can export to editable Word (.docx) and clean plain text (.txt) for job boards that require pasted content.",
-  },
-  {
-    q: "Do you offer student or team discounts?",
-    a: "We do. Students get 40% off with a valid academic email, and we offer volume pricing for career centres and teams — reach out and we’ll set you up.",
-  },
-];
+export type ResumeFaqProps = { faqs: { q: string; a: string }[] };
 
-export default function FaqSection() {
+
+export default function FaqSection({ faqs }: ResumeFaqProps) {
   const [open, setOpen] = useState<Set<number>>(() => new Set([0]));
   const toggle = (i: number) =>
     setOpen((prev) => {
@@ -54,7 +30,7 @@ export default function FaqSection() {
         </h2>
 
         <div data-aos="fade-up" className="mt-8">
-          {FAQS.map((f, i) => {
+          {faqs.map((f, i) => {
             const isOpen = open.has(i);
             return (
               <div key={f.q} className="border-b border-[#ece7e1]">

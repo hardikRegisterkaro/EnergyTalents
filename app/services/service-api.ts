@@ -164,7 +164,14 @@ export async function getServicePage(slug: string): Promise<ServicePage | null> 
   }
 }
 
-/** Every published service slug — for generateStaticParams and the sitemap. */
+/**
+ * Published service slugs, for generateStaticParams and the sitemap.
+ *
+ * Filtered to the division template: the ServicePage model also backs pages
+ * that live outside /services (the resume builder is stored as one), and
+ * listing those here would prerender and advertise /services/<slug> URLs that
+ * the route deliberately 404s.
+ */
 export async function getServiceSlugs(): Promise<
   Array<{ slug: string; updatedAt?: string }>
 > {
@@ -176,9 +183,12 @@ export async function getServiceSlugs(): Promise<
     if (!res.ok) return [];
     const json = (await res.json()) as {
       success?: boolean;
-      services?: Array<{ slug: string; updatedAt?: string }>;
+      services?: Array<{ slug: string; updatedAt?: string; template?: string }>;
     };
-    return json?.success && Array.isArray(json.services) ? json.services : [];
+    if (!json?.success || !Array.isArray(json.services)) return [];
+    // Older CMS builds omit `template`; treat a missing value as a division
+    // page so this keeps working against a CMS that has not been redeployed.
+    return json.services.filter((s) => (s.template ?? "division") === "division");
   } catch {
     return [];
   }
