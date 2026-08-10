@@ -36,13 +36,12 @@ type SectionBase = { id: string; label: string; heading: string };
 export type CardsSection = SectionBase & {
   kind: "cards";
   intro?: string;
-  cards: { icon?: string; title: string; points: string[] }[];
+  cards: { title: string; points: string[] }[];
 };
 
 export type ChipsSection = SectionBase & {
   kind: "chips";
   intro?: string;
-  chipIcon?: string;
   chips: string[];
   note?: string;
 };
@@ -68,7 +67,7 @@ export type NotesSection = SectionBase & {
 export type IntroSection = SectionBase & {
   kind: "intro";
   paragraphs: string[];
-  stats?: { icon?: string; value: string; label: string }[];
+  stats?: { value: string; label: string }[];
 };
 
 export type ChecklistSection = SectionBase & { kind: "checklist"; intro?: string; items: string[] };
