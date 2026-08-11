@@ -129,13 +129,13 @@ export default async function SiteFooter() {
         <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-linec pt-6 text-[13px] text-body2 sm:flex-row sm:items-center">
           <p>© 2026 Energy Talents Ltd. All rights reserved.</p>
           <span className="flex gap-6">
-            <Link href="/legal#privacy" className="hover:text-brand">
+            <Link href="/privacy-policy" className="hover:text-brand">
               Privacy
             </Link>
-            <Link href="/legal#terms" className="hover:text-brand">
+            <Link href="/terms-and-conditions" className="hover:text-brand">
               Terms
             </Link>
-            <Link href="/legal#cookies" className="hover:text-brand">
+            <Link href="/cookie-policy" className="hover:text-brand">
               Cookies
             </Link>
           </span>

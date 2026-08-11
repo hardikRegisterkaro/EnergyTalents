@@ -30,7 +30,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE}/resume-builder`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/blog`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE}/contact-us`, changeFrequency: "yearly", priority: 0.6 },
-    { url: `${BASE}/legal`, changeFrequency: "yearly", priority: 0.3 },
+    // The three policies are pages in their own right; /legal is kept as an
+    // index so existing links and bookmarks still resolve.
+    { url: `${BASE}/legal`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${BASE}/privacy-policy`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/terms-and-conditions`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/cookie-policy`, changeFrequency: "yearly", priority: 0.3 },
   ];
 
   // A large limit rather than paging: the CMS caps it, and one request keeps
