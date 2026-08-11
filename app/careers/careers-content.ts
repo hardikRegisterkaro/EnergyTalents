@@ -215,14 +215,23 @@ export function withCareersDefaults(
 }
 
 
+/**
+ * Cache policy. Same reasoning as careers/roles-api.ts: in development the
+ * CMS's revalidation ping goes to PRODUCTION_URL rather than the dev server,
+ * and Next persists the fetch cache across restarts, so a cached read here
+ * would serve stale copy indefinitely while testing locally.
+ */
+function cacheFor(tags: string[]): RequestInit & { next?: { tags: string[] } } {
+  return process.env.NODE_ENV === "development"
+    ? { cache: "no-store" }
+    : { cache: "force-cache", next: { tags } };
+}
+
 /** Fetch the page copy from the CMS, falling back to the shipped defaults. */
 export async function getCareersContent(): Promise<CareersPageContent> {
   const base = (process.env.NEXT_PUBLIC_CMS_URL ?? "http://localhost:3000").replace(/\/$/, "");
   try {
-    const res = await fetch(`${base}/api/careers-page`, {
-      cache: "force-cache",
-      next: { tags: ["careers-page"] },
-    });
+    const res = await fetch(`${base}/api/careers-page`, cacheFor(["careers-page"]));
     if (!res.ok) return DEFAULT_CAREERS_CONTENT;
     const json = (await res.json()) as { success: boolean; data?: { content?: unknown } };
     if (!json.success) return DEFAULT_CAREERS_CONTENT;

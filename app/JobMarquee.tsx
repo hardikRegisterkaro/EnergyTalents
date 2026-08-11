@@ -1,55 +1,63 @@
 import Link from "next/link";
+import { getRoles, type Role } from "./careers/roles-api";
 
 /**
  * Active staffing pipeline — a full-bleed, infinitely scrolling marquee of live
- * role cards. Reuses the site's `.marquee` engine (translateX 0→-50%, paused on
- * hover via `.marquee-track`, disabled under prefers-reduced-motion). The card
- * set is rendered twice so the -50% loop is seamless; per-card `mr-6` (not a
- * flex gap) keeps the seam perfectly aligned. Edge gradients fade the ends.
+ * role cards, pulled from the CMS. This used to be a hardcoded array of eight
+ * jobs that never existed in the CMS ("Commissioning Lead — LNG · Qatar",
+ * "Subsea Pipeline Welder · Norway") — every card linked to /careers#roles, but
+ * the specific title, region and rotation shown were fiction, so a visitor
+ * could arrive expecting a posting that was never made.
+ *
+ * Reuses the site's `.marquee` engine (translateX 0→-50%, paused on hover via
+ * `.marquee-track`, disabled under prefers-reduced-motion). The card set is
+ * rendered twice so the -50% loop is seamless; per-card `mr-6` (not a flex
+ * gap) keeps the seam perfectly aligned. Edge gradients fade the ends.
  */
 
-type Job = {
-  sector: keyof typeof SECTOR_STYLES;
-  title: string;
-  region: string;
-  rotation: string;
-};
+const HOW_MANY = 10;
 
-const SECTOR_STYLES = {
-  Subsea: "bg-cyan-700/10 text-cyan-700",
-  Renewable: "bg-green-600/10 text-green-600",
-  Maritime: "bg-sky-700/10 text-sky-700",
-  "Oil & Gas": "bg-orange-500/10 text-orange-500",
-  Infrastructure: "bg-violet-600/10 text-violet-600",
-} as const;
+/**
+ * A fixed colour per category name would need updating every time an editor
+ * adds a discipline in the CMS. Hashing the name into a small fixed palette
+ * gives every category a stable, distinct-looking tag with no such list to
+ * maintain — the same category always lands on the same colour, but the
+ * mapping isn't hardcoded to today's five disciplines.
+ */
+const TAG_PALETTE = [
+  "bg-cyan-700/10 text-cyan-700",
+  "bg-green-600/10 text-green-600",
+  "bg-sky-700/10 text-sky-700",
+  "bg-orange-500/10 text-orange-500",
+  "bg-violet-600/10 text-violet-600",
+  "bg-rose-600/10 text-rose-600",
+  "bg-amber-600/10 text-amber-600",
+] as const;
 
-const JOBS: Job[] = [
-  { sector: "Subsea", title: "Subsea Construction Engineer", region: "Angola", rotation: "Rotational · 28/28" },
-  { sector: "Renewable", title: "Wind Turbine Technician (GWO)", region: "North Sea", rotation: "Contract · 12 mo" },
-  { sector: "Maritime", title: "Dynamic Positioning Operator", region: "Brazil", rotation: "Rotational · 6/6" },
-  { sector: "Oil & Gas", title: "Commissioning Lead — LNG", region: "Qatar", rotation: "Staff · Permanent" },
-  { sector: "Infrastructure", title: "HSE Manager — EPC", region: "Saudi Arabia", rotation: "Contract · 24 mo" },
-  { sector: "Subsea", title: "Subsea Pipeline Welder (6G)", region: "Norway", rotation: "Project · 8 mo" },
-  { sector: "Renewable", title: "Solar EPC Site Manager", region: "Australia", rotation: "Contract · 18 mo" },
-  { sector: "Oil & Gas", title: "Drilling Supervisor", region: "Guyana", rotation: "Rotational · 28/28" },
-];
+function tagStyle(category: string): string {
+  let hash = 0;
+  for (let i = 0; i < category.length; i++) {
+    hash = (hash * 31 + category.charCodeAt(i)) >>> 0;
+  }
+  return TAG_PALETTE[hash % TAG_PALETTE.length];
+}
 
-function JobCard({ job, hidden }: { job: Job; hidden?: boolean }) {
+function JobCard({ role, hidden }: { role: Role; hidden?: boolean }) {
   return (
     <Link
-      href="/careers#roles"
+      href={`/careers/${role.slug}`}
       aria-hidden={hidden || undefined}
       tabIndex={hidden ? -1 : undefined}
       className="group mr-6 flex h-64 w-80 shrink-0 flex-col border border-stone-200 bg-white p-6 transition-colors hover:border-stone-300"
     >
-      {/* Sector tag + live indicator */}
-      <div className="flex items-center justify-between">
+      {/* Category tag + live indicator */}
+      <div className="flex items-center justify-between gap-2">
         <span
-          className={`px-2 py-1 font-jbmono text-[10px] leading-4 ${SECTOR_STYLES[job.sector]}`}
+          className={`truncate px-2 py-1 font-jbmono text-[10px] leading-4 ${tagStyle(role.category)}`}
         >
-          {job.sector}
+          {role.category}
         </span>
-        <span className="flex items-center gap-1.5 font-jbmono text-[10px] text-orange-500">
+        <span className="flex shrink-0 items-center gap-1.5 font-jbmono text-[10px] text-orange-500">
           <span
             aria-hidden
             className="size-1.5 animate-pulse rounded-full bg-orange-500"
@@ -59,22 +67,22 @@ function JobCard({ job, hidden }: { job: Job; hidden?: boolean }) {
       </div>
 
       {/* Title */}
-      <h3 className="mt-6 font-archivo text-lg font-bold leading-6 text-stone-900">
-        {job.title}
+      <h3 className="mt-6 line-clamp-2 font-archivo text-lg font-bold leading-6 text-stone-900">
+        {role.title}
       </h3>
 
       {/* Meta */}
       <div className="mt-auto grid grid-cols-2 gap-4 border-t border-stone-200 pt-4">
         <div>
           <div className="font-jbmono text-[9.5px] text-stone-400">Region</div>
-          <div className="mt-1 font-jbmono text-xs text-stone-600">
-            {job.region}
+          <div className="mt-1 truncate font-jbmono text-xs text-stone-600">
+            {role.location}
           </div>
         </div>
         <div>
           <div className="font-jbmono text-[9.5px] text-stone-400">Rotation</div>
-          <div className="mt-1 font-jbmono text-xs text-stone-600">
-            {job.rotation}
+          <div className="mt-1 truncate font-jbmono text-xs text-stone-600">
+            {role.type} · {role.duration}
           </div>
         </div>
       </div>
@@ -93,7 +101,14 @@ function JobCard({ job, hidden }: { job: Job; hidden?: boolean }) {
   );
 }
 
-export default function JobMarquee() {
+export default async function JobMarquee() {
+  const { roles } = await getRoles({ sort: "newest", limit: HOW_MANY });
+
+  // A marquee needs several cards to read as a pipeline rather than a single
+  // static card; below that it isn't worth the section, and an unreachable
+  // CMS must not render an empty scroller.
+  if (roles.length < 3) return null;
+
   return (
     <>
       {/* Header (contained) */}
@@ -142,11 +157,11 @@ export default function JobMarquee() {
       {/* Marquee (full-bleed) */}
       <div className="marquee-track relative mt-12 overflow-hidden">
         <div className="marquee" style={{ animationDuration: "48s" }}>
-          {JOBS.map((job, i) => (
-            <JobCard key={`a-${i}`} job={job} />
+          {roles.map((role) => (
+            <JobCard key={`a-${role.slug}`} role={role} />
           ))}
-          {JOBS.map((job, i) => (
-            <JobCard key={`b-${i}`} job={job} hidden />
+          {roles.map((role) => (
+            <JobCard key={`b-${role.slug}`} role={role} hidden />
           ))}
         </div>
 
