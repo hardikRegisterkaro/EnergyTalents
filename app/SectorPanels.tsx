@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCarousel } from "./useCarousel";
-import { INDUSTRIES } from "./industry/industries";
+import type { IndustryContent } from "./industry/industry-api";
 
 /**
  * Industry Sectors — a row of image panels linking to each sector's page. On
@@ -11,9 +11,9 @@ import { INDUSTRIES } from "./industry/industries";
  * becomes a 2-up grid and at lg a 4-across grid. Descriptions reveal on hover
  * (desktop) and stay visible on touch.
  *
- * The sectors themselves live in industry/industries.ts, shared with the pages
- * they link to so a card and its page cannot describe the same sector
- * differently.
+ * The sectors are handed in by the page rather than imported, so the card and
+ * the sector page it links to render the same CMS copy — a title edited in the
+ * CMS changes both, not just one.
  */
 
 
@@ -21,7 +21,7 @@ import { INDUSTRIES } from "./industry/industries";
 const SCRIM =
   "linear-gradient(180deg, rgba(0,0,0,0.42) 0%, rgba(0,0,0,0.1) 30%, rgba(0,0,0,0.12) 62%, rgba(0,0,0,0.55) 100%)";
 
-export default function SectorPanels() {
+export default function SectorPanels({ sectors }: { sectors: IndustryContent[] }) {
   const { scrollerRef, active, goTo } = useCarousel();
 
   return (
@@ -55,7 +55,7 @@ export default function SectorPanels() {
         ref={scrollerRef}
         className="no-scrollbar -mx-4 -mb-4 mt-10 flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto scroll-px-4 px-4 py-4 sm:mx-0 sm:mb-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:py-0 lg:mt-12 lg:grid-cols-4 lg:gap-3"
       >
-        {INDUSTRIES.map((s) => (
+        {sectors.map((s) => (
           <Link
             key={s.n}
             href={`/industry/${s.slug}`}
@@ -97,7 +97,7 @@ export default function SectorPanels() {
 
       {/* Pagination dots — mobile only */}
       <div className="mt-6 flex justify-center gap-2 sm:hidden">
-        {INDUSTRIES.map((s, i) => (
+        {sectors.map((s, i) => (
           <button
             key={s.n}
             type="button"

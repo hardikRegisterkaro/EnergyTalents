@@ -4,6 +4,7 @@ import Link from "next/link";
 import { displayFontVars } from "./display-fonts";
 import SolutionsGrid from "./SolutionsGrid";
 import SectorPanels from "./SectorPanels";
+import { getIndustries } from "./industry/industry-api";
 import StaffingPartner from "./StaffingPartner";
 import ReadinessVault from "./ReadinessVault";
 import RegionCards from "./RegionCards";
@@ -31,7 +32,11 @@ const BADGES = [
   "Single global contract",
 ];
 
-export default function Home() {
+export default async function Home() {
+  // Sector copy is CMS-managed; the cards and the sector pages read the same
+  // record so they cannot disagree.
+  const sectors = await getIndustries();
+
   return (
     <main>
       {/* Hero — floating inset block ------------------------------- */}
@@ -139,7 +144,7 @@ export default function Home() {
       {/* Industry sectors — expanding panels ---------------------- */}
       <section className={`${displayFontVars} bg-white px-4 py-16 sm:px-6 md:py-24`}>
         <div className="mx-auto max-w-[1276px]">
-          <SectorPanels />
+          <SectorPanels sectors={sectors} />
         </div>
       </section>
 
