@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getRoles } from "./careers/roles-api";
 import { getPostSlugs } from "./blog/posts-api";
 import { getServiceSlugs } from "./services/service-api";
+import { INDUSTRIES } from "./industry/industries";
 
 // Keep in sync with metadataBase in app/layout.tsx.
 const BASE = "https://energytalentz.com";
@@ -52,6 +53,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
+  // A fixed set tied to the home page's sector row, so they are listed
+  // directly rather than fetched.
+  const industries: MetadataRoute.Sitemap = INDUSTRIES.map((i) => ({
+    url: `${BASE}/industry/${i.slug}`,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
   const services: MetadataRoute.Sitemap = serviceSlugs.map((s) => ({
     url: `${BASE}/services/${s.slug}`,
     lastModified: s.updatedAt ? new Date(s.updatedAt) : now,
@@ -67,7 +76,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...core, ...services, ...roles, ...articles].map((entry) => ({
+  return [...core, ...industries, ...services, ...roles, ...articles].map((entry) => ({
     lastModified: now,
     ...entry,
   }));
