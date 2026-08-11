@@ -19,7 +19,7 @@ import type { PricingFeature } from "./PricingCard";
  * getting its own model: the ServicePage document is already a hero plus
  * ordered generic sections with a working editor, and the CMS's own "packages"
  * model is a travel-itinerary shape (region, season, itinerary days) inherited
- * from the fork, which cannot express plans and billing periods.
+ * from the fork, which cannot express plans and experience tiers.
  *
  * /services/[slug] refuses anything that is not template "division", so this
  * page is not reachable at a second URL.
@@ -69,14 +69,14 @@ export default async function ResumeBuilderPage() {
   const comboFeatures = sectionById(content, SECTIONS.comboFeatures, "notes");
   const faq = sectionById(content, SECTIONS.faq, "faq");
 
-  // Each row is [period, resume price, resume note, combo price, combo note].
-  // Rows are read positionally, so a short row yields empty strings rather
-  // than undefined reaching the component.
+  // Each row is [experience level, resume price, resume note, combo price,
+  // combo note]. Rows are read positionally, so a short row yields empty
+  // strings rather than undefined reaching the component.
   const rows = pricingTable?.rows ?? [];
   const cell = (row: string[], i: number) => row[i] ?? "";
 
   const pricing = {
-    periods: rows.map((r) => cell(r, 0)),
+    tiers: rows.map((r) => cell(r, 0)),
     resume: {
       price: rows.map((r) => cell(r, 1)),
       note: rows.map((r) => cell(r, 2)),
