@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { INDUSTRIES, industryBySlug } from "../industries";
+import { INDUSTRIES } from "../industries";
+import { getIndustry } from "../industry-api";
 import {
   formatRate,
   getRoles,
@@ -14,11 +15,12 @@ type Params = { params: Promise<{ slug: string }> };
 /**
  * An industry sector page, reached from the sector cards on the home page.
  *
- * The sector itself (name, photograph, description) is fixed — see
- * industries.ts — but everything that dates comes from the CMS: the open roles
- * in that sector, and the figures above them, which are counted from those
- * roles rather than written down. A page with nothing open therefore says so
- * instead of showing stale numbers.
+ * The copy comes from the CMS (see industry-api.ts) with the shipped text as a
+ * fallback; the photograph, focal point and careers category stay in code
+ * because they tie the sector to an image and to a fixed slot in the home
+ * page's row. The open roles and the figures above them come from the CMS
+ * careers data and are counted rather than written down, so a sector with
+ * nothing open says so instead of showing stale numbers.
  */
 
 /** Darkening scrim so the hero text stays legible over the photo. */
@@ -31,11 +33,11 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const industry = industryBySlug(slug);
+  const industry = await getIndustry(slug);
   if (!industry) return {};
   return {
-    title: `${industry.title} Crewing`,
-    description: industry.body,
+    title: industry.metaTitle || `${industry.title} Crewing`,
+    description: industry.metaDescription || industry.body,
     alternates: { canonical: `/industry/${industry.slug}` },
     openGraph: {
       title: `${industry.title} Crewing — Energy Talents`,
@@ -99,7 +101,7 @@ function RoleCard({ role }: { role: Role }) {
 
 export default async function IndustryPage({ params }: Params) {
   const { slug } = await params;
-  const industry = industryBySlug(slug);
+  const industry = await getIndustry(slug);
   if (!industry) notFound();
 
   // Roles in this sector. Never throws — an unreachable CMS yields an empty
