@@ -135,7 +135,11 @@ function ResumeModal({
       leadSource: `Resume Builder — ${intent.eyebrow}`,
       formData: {
         Request: intent.title,
-        Plan: intent.summary,
+        // Recorded separately rather than as one summary string, so the price
+        // is readable in the leads table on its own.
+        Plan: intent.plan,
+        "Experience level": intent.tier,
+        Price: intent.price,
         "Target role / industry": targetRole,
         "Job description": jobDescription,
       },

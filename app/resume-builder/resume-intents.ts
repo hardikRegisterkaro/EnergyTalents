@@ -13,6 +13,15 @@ export type ResumeIntent = {
   submitLabel: string;
   /** Optional highlighted summary line, e.g. the chosen plan · tier · price. */
   summary?: string;
+  /**
+   * The plan selection behind `summary`, kept as separate values so the lead
+   * records them as their own fields. The summary is one display string —
+   * useless for reading a price out of the leads table, sorting by it, or
+   * totalling it.
+   */
+  plan?: string;
+  tier?: string;
+  price?: string;
   // Name, email and phone are collected for every intent — the CMS requires all
   // three on a lead — so only the extra fields below are configurable.
   role?: boolean;
@@ -63,5 +72,8 @@ export function planIntent(
     submitLabel: "Start my plan →",
     role: true,
     summary: `${plan} · ${tier} · ${price}`,
+    plan,
+    tier,
+    price,
   };
 }
