@@ -51,7 +51,17 @@ export default async function SiteFooter() {
   return (
     <footer className="border-t border-linec bg-white pt-16 pb-8">
       <div className="mx-auto max-w-[1216px] px-6">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1.1fr]">
+        {/* The contact block is fixed; link columns are CMS-managed and can
+            vary in count, so their track sizing has to follow suit — a fixed
+            5-track grid left an empty gap once a column was removed. The
+            count is threaded through as a CSS variable rather than a plain
+            inline grid-template-columns so the `lg:` prefix still applies —
+            below that breakpoint this stays the original single-column
+            stack. */}
+        <div
+          className="grid gap-10 lg:grid-cols-[1.4fr_repeat(var(--footer-cols),1fr)]"
+          style={{ ["--footer-cols" as string]: Math.max(columns.length, 1) }}
+        >
           <div>
             <Link href="/" className="inline-flex items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
