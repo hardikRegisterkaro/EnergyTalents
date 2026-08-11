@@ -985,3 +985,44 @@ html[data-reveal-ready] [data-aos].is-in {
   width: 100%;
   margin-block: 2rem;
 }
+
+/* Legal policy body -----------------------------------------------------
+   Privacy / Terms / Cookies render CMS-authored HTML, so they reuse .jd-body
+   for the element-level work and adjust only the reading scale and colours to
+   match the legal page's own typography (font-body at 15px on --body2).
+   Applied as `class="jd-body legal-body"`.                               */
+
+.legal-body {
+  font-family: var(--font-body), "Inter", sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+/* Headings inside a policy sit below the section's own <h2>, so they start a
+   step down from the article scale. */
+.legal-body :is(h1, h2, h3) {
+  font-family: var(--font-display), "Space Grotesk", sans-serif;
+}
+.legal-body h1 { font-size: 1.375rem; }  /* 22px */
+.legal-body h2 { font-size: 1.125rem; }  /* 18px */
+.legal-body h3 { font-size: 1.125rem; }  /* 18px — matches the old <H3> */
+
+/* Anchor targets clear the sticky header. */
+.legal-body :is(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: 6rem;
+}
+
+/* Bullets used the brand dot rather than jd-body's default marker. */
+.legal-body ul > li::before {
+  background: var(--color-brand, #ea580c);
+}
+
+/* Policies link to email and to other pages often enough that links need to
+   read as links without the article body's heavier treatment. */
+.legal-body a {
+  font-weight: 600;
+  text-decoration: none;
+}
+.legal-body a:hover {
+  text-decoration: underline;
+}
