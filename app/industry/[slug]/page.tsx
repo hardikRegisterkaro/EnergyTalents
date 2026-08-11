@@ -180,9 +180,60 @@ export default async function IndustryPage({ params }: Params) {
         </div>
       </section>
 
+      {/* About the sector — sits between the hero and the openings */}
+      <section className="bg-white px-6 py-16 md:py-24 lg:px-8">
+        <div className="mx-auto grid max-w-[1276px] gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,460px)] lg:gap-16">
+          <div>
+            <div className="flex items-center gap-3.5">
+              <span className="h-[1.5px] w-6 bg-orange-500" />
+              <span className="font-jbmono text-xs font-medium uppercase tracking-[0.24em] text-orange-500">
+                About the sector
+              </span>
+            </div>
+            <h2 className="mt-4 max-w-[620px] font-archivo text-[26px] font-bold leading-[1.15] text-stone-900 sm:text-[34px]">
+              {industry.overviewHeading}
+            </h2>
+            {industry.overview.map((paragraph, i) => (
+              <p
+                key={i}
+                className={`max-w-[620px] font-plex text-[15.5px] leading-7 text-stone-600 ${
+                  i === 0 ? "mt-6" : "mt-4"
+                }`}
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+
+          {/* What we crew in this sector */}
+          <div className="lg:pt-2">
+            <p className="font-jbmono text-[11px] font-bold uppercase tracking-[0.16em] text-gray-400">
+              What we crew here
+            </p>
+            <div className="mt-5 border-t border-gray-200">
+              {industry.supplies.map((item) => (
+                <div key={item.title} className="border-b border-gray-200 py-5">
+                  <div className="flex gap-3.5">
+                    <span aria-hidden className="mt-2 size-1.5 shrink-0 bg-orange-500" />
+                    <div>
+                      <div className="font-archivo text-base font-bold text-stone-900">
+                        {item.title}
+                      </div>
+                      <p className="mt-1 font-plex text-sm leading-6 text-stone-600">
+                        {item.body}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Figures — counted from the live roles, not written down */}
       {roles.length > 0 && (
-        <section className="border-b border-gray-200 bg-gray-50">
+        <section className="border-y border-gray-200 bg-gray-50">
           <div className="mx-auto max-w-[1276px] px-6 py-12 lg:px-8">
             <div className="grid grid-cols-3 gap-6">
               {stats.map((s) => (
