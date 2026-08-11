@@ -5,9 +5,14 @@ import { useResumeModal } from "./ResumeModal";
 import { planIntent } from "./resume-intents";
 
 /**
- * Hero pricing — a shared billing toggle over two plan cards (Resume Only, and
- * Resume + LinkedIn / Best Value). Switching the period updates both prices and
- * billing notes. Adapted from the Insights hero design.
+ * Hero pricing — a shared experience-level toggle over two plan cards (Resume
+ * Only, and Resume + LinkedIn / Best Value). Switching the level updates both
+ * prices and their small print.
+ *
+ * This was a billing-period toggle (Monthly / Quarterly / 6 Months). Resume
+ * writing is priced by how much career history there is to work with, not by
+ * subscription length, so the tiers are now experience bands and the price is
+ * a one-off fee rather than a monthly charge.
  */
 
 const ACCENT_GRADIENT = "linear-gradient(95deg, #ffb020, #ea580c)";
@@ -16,15 +21,16 @@ const LI_BLUE = "#0a66c2";
 export type PricingFeature = { lead: string; rest: string };
 
 export type PricingPlan = {
-  /** Price per billing period, index-aligned with `periods`. */
+  /** Price per experience level, index-aligned with `tiers`. */
   price: string[];
-  /** Small print under the price, index-aligned with `periods`. */
+  /** Small print under the price, index-aligned with `tiers`. */
   note: string[];
   features: PricingFeature[];
 };
 
 export type PricingProps = {
-  periods: string[];
+  /** Experience bands, e.g. "Entry level" / "Mid level" / "Senior level". */
+  tiers: string[];
   resume: PricingPlan;
   combo: PricingPlan;
 };
@@ -47,11 +53,11 @@ function Tick({ tone, li }: { tone: "orange" | "blue"; li?: boolean }) {
   );
 }
 
-export default function PricingCard({ periods, resume, combo }: PricingProps) {
+export default function PricingCard({ tiers, resume, combo }: PricingProps) {
   // Default to the middle option when there is one — it was Quarterly in the
-  // shipped design — but stay in range for any number of periods.
+  // shipped design — but stay in range for any number of tiers.
   const [active, setActive] = useState(() =>
-    periods.length > 1 ? Math.min(1, periods.length - 1) : 0
+    tiers.length > 1 ? Math.min(1, tiers.length - 1) : 0
   );
   const { openModal } = useResumeModal();
 
@@ -60,10 +66,10 @@ export default function PricingCard({ periods, resume, combo }: PricingProps) {
       {/* Billing toggle */}
       <div
         role="tablist"
-        aria-label="Billing period"
+        aria-label="Experience level"
         className="mx-auto flex max-w-[340px] gap-1 rounded-xl border border-linec bg-[#f4f2ee] p-1"
       >
-        {periods.map((p, i) => {
+        {tiers.map((p, i) => {
           const on = i === active;
           return (
             <button
@@ -95,7 +101,6 @@ export default function PricingCard({ periods, resume, combo }: PricingProps) {
             <span className="font-jakarta text-[40px] font-extrabold leading-none text-ink">
               {resume.price[active]}
             </span>
-            <span className="font-body text-sm font-medium text-stone-400">/mo</span>
           </div>
           <div className="mt-2 font-body text-[13px] text-body2">
             {resume.note[active]}
@@ -115,7 +120,7 @@ export default function PricingCard({ periods, resume, combo }: PricingProps) {
             type="button"
             onClick={() =>
               openModal(
-                planIntent("Resume Only", periods[active], resume.price[active]),
+                planIntent("Resume Only", tiers[active], resume.price[active]),
               )
             }
             className="mt-auto block w-full rounded-xl pt-0 text-center"
@@ -151,8 +156,7 @@ export default function PricingCard({ periods, resume, combo }: PricingProps) {
               <span className="font-jakarta text-[40px] font-extrabold leading-none text-ink">
                 {combo.price[active]}
               </span>
-              <span className="font-body text-sm font-medium text-stone-400">/mo</span>
-            </div>
+              </div>
             <div className="mt-2 font-body text-[13px] text-body2">
               {combo.note[active]}
             </div>
@@ -173,7 +177,7 @@ export default function PricingCard({ periods, resume, combo }: PricingProps) {
                 openModal(
                   planIntent(
                     "Resume + LinkedIn",
-                    periods[active],
+                    tiers[active],
                     combo.price[active],
                   ),
                 )

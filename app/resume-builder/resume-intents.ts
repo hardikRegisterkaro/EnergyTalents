@@ -11,8 +11,17 @@ export type ResumeIntent = {
   title: string;
   subtitle: string;
   submitLabel: string;
-  /** Optional highlighted summary line, e.g. the chosen plan · period · price. */
+  /** Optional highlighted summary line, e.g. the chosen plan · tier · price. */
   summary?: string;
+  /**
+   * The plan selection behind `summary`, kept as separate values so the lead
+   * records them as their own fields. The summary is one display string —
+   * useless for reading a price out of the leads table, sorting by it, or
+   * totalling it.
+   */
+  plan?: string;
+  tier?: string;
+  price?: string;
   // Name, email and phone are collected for every intent — the CMS requires all
   // three on a lead — so only the extra fields below are configurable.
   role?: boolean;
@@ -48,10 +57,11 @@ export const AUDIT_INTENT: ResumeIntent = {
   resume: true,
 };
 
-/** Plan-signup intent, built from the pricing card's live plan/period/price. */
+/** Plan-signup intent, built from the pricing card's live plan/tier/price. */
 export function planIntent(
   plan: string,
-  period: string,
+  /** The selected experience band, e.g. "Mid level". */
+  tier: string,
   price: string,
 ): ResumeIntent {
   return {
@@ -61,6 +71,9 @@ export function planIntent(
       "Create your account and we'll email your secure checkout link — no charge yet.",
     submitLabel: "Start my plan →",
     role: true,
-    summary: `${plan} · ${period} · ${price}/mo`,
+    summary: `${plan} · ${tier} · ${price}`,
+    plan,
+    tier,
+    price,
   };
 }
