@@ -6,10 +6,9 @@
  * `posted` label and `days` sort key, so components did not need reshaping.
  *
  * Caching note (Next 16, `cacheComponents` is NOT enabled on this project):
- * `fetch` is uncached by default, so every cached read below opts in with
- * `cache: "force-cache"` and carries a tag. The CMS calls
- * POST /api/revalidate with those tags after any career mutation, which is
- * handled by app/api/revalidate/route.ts.
+ * `fetch` is uncached by default, so reads opt in via `cacheFor()` below. The
+ * CMS calls POST /api/revalidate with those tags after any career mutation,
+ * which is handled by app/api/revalidate/route.ts.
  */
 
 export type Role = {
@@ -85,6 +84,23 @@ export const CMS_URL = (
 ).replace(/\/$/, "");
 
 /**
+ * Cache policy for a server-side CMS read.
+ *
+ * Production caches on the tag and lets the CMS invalidate it on publish. In
+ * development the CMS's revalidation ping goes to PRODUCTION_URL — normally
+ * the deployed frontend, not the dev server — so a cached read here would
+ * serve whatever it fetched on first load, forever. Next also persists the
+ * fetch cache under .next/cache, so the stale entry survives a restart; only
+ * deleting that directory would clear it. See the identical fix already
+ * applied to the blog (app/blog/posts-api.ts) and menus (app/lib/menus.ts).
+ */
+function cacheFor(tags: string[]): RequestInit & { next?: { tags: string[] } } {
+  return process.env.NODE_ENV === "development"
+    ? { cache: "no-store" }
+    : { cache: "force-cache", next: { tags } };
+}
+
+/**
  * Split a role's pay into amount and period for display.
  *
  * Authors naturally type the period into the salary box ("£700–820/day") as
@@ -158,10 +174,10 @@ const EMPTY: RolesResponse = {
  */
 export async function getRoles(params: RoleQuery = {}): Promise<RolesResponse> {
   try {
-    const res = await fetch(`${CMS_URL}/api/careers/client${rolesQueryString(params)}`, {
-      cache: "force-cache",
-      next: { tags: ["career-list"] },
-    });
+    const res = await fetch(
+      `${CMS_URL}/api/careers/client${rolesQueryString(params)}`,
+      cacheFor(["career-list"])
+    );
     if (!res.ok) return EMPTY;
     return (await res.json()) as RolesResponse;
   } catch {
@@ -172,10 +188,10 @@ export async function getRoles(params: RoleQuery = {}): Promise<RolesResponse> {
 /** Server-side detail fetch. Returns null for drafts, unknown slugs or errors. */
 export async function getRole(slug: string): Promise<RoleDetail | null> {
   try {
-    const res = await fetch(`${CMS_URL}/api/careers/client/${encodeURIComponent(slug)}`, {
-      cache: "force-cache",
-      next: { tags: [`career-${slug}`] },
-    });
+    const res = await fetch(
+      `${CMS_URL}/api/careers/client/${encodeURIComponent(slug)}`,
+      cacheFor([`career-${slug}`])
+    );
     if (!res.ok) return null;
     const data = (await res.json()) as { success: boolean; role: RoleDetail };
     return data.success ? data.role : null;
